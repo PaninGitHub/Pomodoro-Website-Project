@@ -10,19 +10,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nixie+One&family=Source+Code+Pro:ital,wght@0,356;1,356&display=swap" rel="stylesheet">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <body>
-        <div class="background">
-            <div class="timer">
-                <div class="clock">
-                    <span class="num" id="min"> 00 </span> : <span class="num" id="sec"> 00 </span>
-                </div>
-                <div style="clear:both">
-                    <button type="button" class="start">
-                        Start
-                    </button>
+            <div id='statustext'>
+                Don't look here
+            </div>
+            <div class="background">
+                <div class="timer">
+                    <div class="clock">
+                        <span class="num" id="min"> 00 </span> : <span class="num" id="sec"> 00 </span>
+                    </div>
+                    <div style="clear:both">
+                        <button type="button" class="start" id="timebutton">
+                            Start
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <p>www.simplpomodoro.xyz</p>
+            <div id="url">
+                www.simplidoro.com
+            </div>
     </body>
+    <script src="timer.js"></script>
+    </head>
 </html>
