@@ -13,9 +13,9 @@ var audio = new Audio('https://cdn.discordapp.com/attachments/109484647169997626
 var timer;
 var min;
 var sec;
-var settime = 3;
+var settime = 1500;
 var time = settime;
-var isRunning = false;
+var state = "start";
 var thisInterval;
 
 
@@ -30,11 +30,15 @@ function displayTime(){
 
 //General Functions
 function setTime(){
-    const thisHour = document.getElementById("hour-in");
-    const thisMin = document.getElementById("min-in");
-    const thisSec = document.getElementById("sec-in");
-    time = thisHour * 3600 + thisMin * 60 + thisSec;
-    displayTime()
+    const thisHour = document.getElementById("hour-in").value;
+    const thisMin = document.getElementById("min-in").value;
+    const thisSec = document.getElementById("sec-in").value;
+    [thisSec, thisMin, thisHour].forEach( (element) => {
+        //Will implement later. Handles cases if the user didn't set a value for said thing.
+    })
+    time = thisSec + thisMin * 60 + thisHour * 3600;
+    displayTime();
+    console.log("Set time to " + time);
 }
 
 //Timer Handlier
@@ -66,31 +70,27 @@ button.dataset.state = 'start'
 
 //Event Handlers
 button.addEventListener("click", function(){
-    switch(this.dataset.state) {
-        case 'start':
-            this.dataset.state = 'pause'
-            button.innerHTML = "Pause";
-            isRunning = true;
-            runTimer()
-        case 'unpause':
-            this.dataset.state = 'pause'
-            button.innerHTML = "Pause";
-            isRunning = true;
-            runTimer()
-        case 'pause':
-            this.dataset.state = 'unpause'
-            button.innerHTML = "Unpause";
-            isRunning = false;
-            clearInterval(thisInterval);
-        case 'enter':
-            this.dataset.state = 'unpause';
-            button.innerHTML = 'Unpause';
-            setTime()
-            clockdisplay.classList.add("time-display-show");
-            clockdisplay.classList.remove("time-display-hide");
-            clockinput.classList.add("time-input-hide");
-            clockinput.classList.remove("time-input-show");
+    if (state == 'start' || state == 'paused'){
+        state = 'running'
+        button.innerHTML = "Pause";
+        runTimer()
     }
+    else if (state == 'running'){
+        state = 'paused'
+        button.innerHTML = "Unpause";
+        isRunning = false; 
+        clearInterval(thisInterval);
+    }
+    else if (state == 'input'){
+        state = 'start'
+        button.innerHTML = 'Start';
+        setTime()
+        clockdisplay.classList.add("time-display-show");
+        clockdisplay.classList.remove("time-display-hide");
+        clockinput.classList.add("time-input-hide");
+        clockinput.classList.remove("time-input-show");
+    }
+    console.log("Timer is in " + state + " mode")
 })
 
 //Changing time in clock
@@ -100,11 +100,11 @@ clockdisplay.addEventListener("click", function(){
     clockinput.classList.remove("time-input-hide")
     clockinput.classList.add("time-input-show")
     //If the clock was running when clicked, it will pause it
-    if (isRunning == true){
-        isRunning = false; 
+    if (state == 'running'){
         clearInterval(thisInterval);
     }
-    this.dataset.state = 'enter'
+    state = 'input'
+    console.log("Inputting time")
     button.innerHTML = "Enter";
 })
 
