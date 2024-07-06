@@ -20,7 +20,17 @@
             <div class="background">
                 <div class="timer">
                     <div class="clock">
-                        <span class="num" id="min"> 00 </span> : <span class="num" id="sec"> 00 </span>
+                        <!--The timer display-->
+                        <div class="time-display-show" id="time-display">
+                            <span class="timenum Tdis" id="min-dis"> 00 </span> : <span class="timenum display" id="sec-dis"> 00 </span>
+                        </div>
+                        <!--The timer input selection-->
+                        <div class="time-input-hide" id="time-input">
+                            <!--I love timenum tim!!!!-->
+                            <input class="timenum Tin" id="hour-in" type="num" max="99" placeholder="00" size="2"> : 
+                            <input class="timenum Tin" id="min-in" type="num" max="99" placeholder="00" size="2"> : 
+                            <input class="timenum Tin" id="sec-in" type="num" max="99" placeholder="00" size="2">
+                        </div>
                     </div>
                     <div style="clear:both">
                         <button type="button" class="start" id="timebutton">
@@ -33,6 +43,6 @@
                 www.simplidoro.com
             </div>
     </body>
-    <script src="timer.js"></script>
+    <script src="timer.js" defer></script>
     </head>
 </html>

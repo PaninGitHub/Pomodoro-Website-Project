@@ -2,12 +2,10 @@
 .timer {
     text-align: center;
 }
-
 .clock {
     color: white;
     margin-bottom: 0;
 }
-
 body { 
     background-color: black;
     color: white;
@@ -40,6 +38,22 @@ body {
     border-radius: 12px;
     background-color: rgba(20, 20, 20, 1)
 }
+.timenum {
+    outline: none;
+    background-color: rgba(255,255,255,0);
+    color: white;
+    font-family: Nixie One, Source Code Pro, Arial, Helvetica, sans-serif;
+    font-size: 1em;
+}
+.Tin {
+    font-size: 1em;
+}
+.time-display-hide {
+    display: none;
+}
+.time-input-hide {
+    display: none;
+}
 #url {
     justify-self: end;
     color: white;
@@ -54,4 +68,7 @@ body {
     margin-bottom: 10px;
     justify-content:flex-start;
     font-size: 1.5em;
+}
+#time-input {
+    border: 0;
 }
