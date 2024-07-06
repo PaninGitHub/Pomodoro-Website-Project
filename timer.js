@@ -1,4 +1,4 @@
-//Sets constants for calling elements in the HTML
+//General constants for calling elements in the HTML
 const disMin = document.getElementById("min-dis");
 const disSec = document.getElementById("sec-dis");
 const button = document.getElementById("timebutton")
@@ -28,6 +28,15 @@ function displayTime(){
     disSec.innerHTML = sec.toString().padStart(2, '0');
 }
 
+//General Functions
+function setTime(){
+    const thisHour = document.getElementById("hour-in");
+    const thisMin = document.getElementById("min-in");
+    const thisSec = document.getElementById("sec-in");
+    time = thisHour * 3600 + thisMin * 60 + thisSec;
+    displayTime()
+}
+
 //Timer Handlier
 function timerDone(){
     statustext.innerHTML = "The Timer is Done";
@@ -51,18 +60,36 @@ function runTimer(){
     }, 1000)
 }
 
-//Event Handlers
+//Start of the program
 displayTime()
+button.dataset.state = 'start'
+
+//Event Handlers
 button.addEventListener("click", function(){
-    if (isRunning == false){
-        button.innerHTML = "Pause";
-        isRunning = true;
-        runTimer()
-    }
-    else if (isRunning == true){
-        button.innerHTML = "Unpause";
-        isRunning = false; 
-        clearInterval(thisInterval);
+    switch(this.dataset.state) {
+        case 'start':
+            this.dataset.state = 'pause'
+            button.innerHTML = "Pause";
+            isRunning = true;
+            runTimer()
+        case 'unpause':
+            this.dataset.state = 'pause'
+            button.innerHTML = "Pause";
+            isRunning = true;
+            runTimer()
+        case 'pause':
+            this.dataset.state = 'unpause'
+            button.innerHTML = "Unpause";
+            isRunning = false;
+            clearInterval(thisInterval);
+        case 'enter':
+            this.dataset.state = 'unpause';
+            button.innerHTML = 'Unpause';
+            setTime()
+            clockdisplay.classList.add("time-display-show");
+            clockdisplay.classList.remove("time-display-hide");
+            clockinput.classList.add("time-input-hide");
+            clockinput.classList.remove("time-input-show");
     }
 })
 
@@ -77,6 +104,7 @@ clockdisplay.addEventListener("click", function(){
         isRunning = false; 
         clearInterval(thisInterval);
     }
+    this.dataset.state = 'enter'
     button.innerHTML = "Enter";
 })
 
