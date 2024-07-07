@@ -30,11 +30,16 @@ function displayTime(){
 
 //General Functions
 function setTime(){
-    const thisHour = document.getElementById("hour-in").value;
-    const thisMin = document.getElementById("min-in").value;
-    const thisSec = document.getElementById("sec-in").value;
-    [thisSec, thisMin, thisHour].forEach( (element) => {
-        //Will implement later. Handles cases if the user didn't set a value for said thing.
+    let thisHour = Number(document.getElementById("hour-in").value);
+    let thisMin = Number(document.getElementById("min-in").value)
+    let thisSec = Number(document.getElementById("sec-in").value);
+    [thisSec, thisMin, thisHour].forEach((element) => {
+        if(element == ""){
+            element = 0
+        }
+        else{
+            element *= 1
+        }
     })
     time = thisSec + thisMin * 60 + thisHour * 3600;
     displayTime();
