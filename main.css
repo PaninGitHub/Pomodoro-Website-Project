@@ -1,4 +1,3 @@
-
 .timer {
     text-align: center;
 }
@@ -32,6 +31,7 @@ body {
     box-shadow: 0 6px #333;
 }
 .background {
+    animation: transitionIn 0.75s;
     padding: 20px 20px;
     font-weight: 200;
     font-size: 3.5em;
@@ -71,4 +71,18 @@ body {
 }
 #time-input {
     border: 0;
+}
+#time-button {
+    
+}
+
+@keyframes transitionIn {
+    from {
+        opacity: 0;
+        transform: translateY(38px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

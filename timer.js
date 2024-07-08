@@ -31,17 +31,18 @@ function displayTime(){
 //General Functions
 function setTime(){
     let thisHour = Number(document.getElementById("hour-in").value);
-    let thisMin = Number(document.getElementById("min-in").value)
+    let thisMin = Number(document.getElementById("min-in").value);
     let thisSec = Number(document.getElementById("sec-in").value);
     [thisSec, thisMin, thisHour].forEach((element) => {
         if(element == ""){
-            element = 0
+            element = 0;
         }
         else{
-            element *= 1
+            element *= 1;
         }
     })
-    time = thisSec + thisMin * 60 + thisHour * 3600;
+    settime = thisSec + thisMin * 60 + thisHour * 3600;
+    time = settime;
     displayTime();
     console.log("Set time to " + time);
 }
@@ -49,20 +50,20 @@ function setTime(){
 //Timer Handlier
 function timerDone(){
     statustext.innerHTML = "The Timer is Done";
-    statustext.style.opacity = '1'
+    statustext.style.opacity = '1';
     button.innerHTML = "Start";
     time = settime;
     clearInterval(thisInterval);
     isRunning = false;
-    console.log(time)
+    console.log(time);
     audio.play();
 }
 
 function runTimer(){
     thisInterval = setInterval(function() {
         if (time < 1){
-            timerDone()
-            return
+            timerDone();
+            return;
         }
             time -= 1;
             displayTime();
@@ -75,35 +76,54 @@ button.dataset.state = 'start'
 
 //Event Handlers
 button.addEventListener("click", function(){
-    if (state == 'start' || state == 'paused'){
+    if (button.innerHTML == 'Stop'){
+        state = 'start'
+        clearInterval(thisInterval);
+        time = settime;
+        displayTime()
+        button.innerHTML = 'Start' 
+    }
+    else if (state == 'start' || state == 'paused'){
         state = 'running'
         button.innerHTML = "Pause";
-        runTimer()
+        runTimer();
     }
     else if (state == 'running'){
         state = 'paused'
         button.innerHTML = "Unpause";
-        isRunning = false; 
         clearInterval(thisInterval);
     }
     else if (state == 'input'){
         state = 'start'
         button.innerHTML = 'Start';
-        setTime()
-        clockdisplay.classList.add("time-display-show");
-        clockdisplay.classList.remove("time-display-hide");
-        clockinput.classList.add("time-input-hide");
-        clockinput.classList.remove("time-input-show");
+        setTime();
+        clockdisplay.classList.replace("time-display-hide", "time-display-show")
+        clockinput.classList.replace("time-input-show", "time-input-hide")
     }
     console.log("Timer is in " + state + " mode")
 })
 
+document.addEventListener('keydown', (e) => {
+    if(e.code === "ControlLeft" && (state == 'running' || state == 'paused')){
+        button.innerHTML = 'Stop';
+    }
+});
+
+document.addEventListener('keyup', (e) => {
+    if(e.code === "ControlLeft" && button.innerHTML == 'Stop'){
+        if(state == 'running'){
+            button.innerHTML = "Pause"
+        }
+        else if(state == 'paused'){
+            button.innerHTML = "Unpause"
+        }
+    }
+})
+
 //Changing time in clock
 clockdisplay.addEventListener("click", function(){
-    clockdisplay.classList.remove("time-display-show")
-    clockdisplay.classList.add("time-display-hide")
-    clockinput.classList.remove("time-input-hide")
-    clockinput.classList.add("time-input-show")
+    clockdisplay.classList.replace("time-display-show", "time-display-hide")
+    clockinput.classList.replace("time-input-hide", "time-input-show")
     //If the clock was running when clicked, it will pause it
     if (state == 'running'){
         clearInterval(thisInterval);
