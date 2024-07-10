@@ -15,6 +15,7 @@ body {
     justify-content: center;
     align-items: center;
     display: flex;
+    opacity:1;
 }
 .start {
     transition: 0.4s;
@@ -72,8 +73,9 @@ body {
 #time-input {
     border: 0;
 }
-#time-button {
-    
+#timebutton.fade-out{
+    opacity: 0;
+    transition: opacity .2;
 }
 
 @keyframes transitionIn {

@@ -6,6 +6,8 @@ const statustext = document.getElementById("statustext")
 const clockdisplay = document.getElementById("time-display")
 const clockinput = document.getElementById("time-input")
 
+import text from "./text"
+
 //Audio
 var audio = new Audio('https://cdn.discordapp.com/attachments/1094846471699976263/1258240181757022239/clock-alarm-8761.mp3?ex=668752fc&is=6686017c&hm=e8747124324b47b518782a6208cee22756a74b8d84f3413aff77e953b149d439&')
 
@@ -17,7 +19,6 @@ var settime = 1500;
 var time = settime;
 var state = "start";
 var thisInterval;
-
 
 
 //Sets how to display time
@@ -74,7 +75,7 @@ function runTimer(){
 displayTime()
 button.dataset.state = 'start'
 
-//Event Handlers
+//Handles when the button is pressed
 button.addEventListener("click", function(){
     if (button.innerHTML == 'Stop'){
         state = 'start'
@@ -90,7 +91,7 @@ button.addEventListener("click", function(){
     }
     else if (state == 'running'){
         state = 'paused'
-        button.innerHTML = "Unpause";
+        button.innerHTML = "Start";
         clearInterval(thisInterval);
     }
     else if (state == 'input'){
@@ -103,8 +104,10 @@ button.addEventListener("click", function(){
     console.log("Timer is in " + state + " mode")
 })
 
+//Handles when a key is pressed
 document.addEventListener('keydown', (e) => {
     if(e.code === "ControlLeft" && (state == 'running' || state == 'paused')){
+        setTimeout(.2);
         button.innerHTML = 'Stop';
     }
 });
