@@ -6,7 +6,7 @@ const statustext = document.getElementById("statustext")
 const clockdisplay = document.getElementById("time-display")
 const clockinput = document.getElementById("time-input")
 
-import text from "./text"
+import {trans} from "./text.js";
 
 //Audio
 var audio = new Audio('https://cdn.discordapp.com/attachments/1094846471699976263/1258240181757022239/clock-alarm-8761.mp3?ex=668752fc&is=6686017c&hm=e8747124324b47b518782a6208cee22756a74b8d84f3413aff77e953b149d439&')
@@ -81,22 +81,22 @@ button.addEventListener("click", function(){
         state = 'start'
         clearInterval(thisInterval);
         time = settime;
-        displayTime()
-        button.innerHTML = 'Start' 
+        displayTime();
+        trans.static("Start", button);
     }
     else if (state == 'start' || state == 'paused'){
-        state = 'running'
-        button.innerHTML = "Pause";
+        state = 'running';
+        trans.static("Pause", button);
         runTimer();
     }
     else if (state == 'running'){
         state = 'paused'
-        button.innerHTML = "Start";
+        trans.static("Unpause", button)
         clearInterval(thisInterval);
     }
     else if (state == 'input'){
         state = 'start'
-        button.innerHTML = 'Start';
+        trans.static("Start", button);
         setTime();
         clockdisplay.classList.replace("time-display-hide", "time-display-show")
         clockinput.classList.replace("time-input-show", "time-input-hide")
@@ -107,18 +107,17 @@ button.addEventListener("click", function(){
 //Handles when a key is pressed
 document.addEventListener('keydown', (e) => {
     if(e.code === "ControlLeft" && (state == 'running' || state == 'paused')){
-        setTimeout(.2);
-        button.innerHTML = 'Stop';
+        trans.typewrite(button.innerHTML, "Stop", .02, button);
     }
 });
 
 document.addEventListener('keyup', (e) => {
     if(e.code === "ControlLeft" && button.innerHTML == 'Stop'){
         if(state == 'running'){
-            button.innerHTML = "Pause"
+            trans.typewrite(button.innerHTML, "Pause", .02, button);
         }
         else if(state == 'paused'){
-            button.innerHTML = "Unpause"
+            trans.typewrite(button.innerHTML, "Unpause", .02, button);
         }
     }
 })
@@ -137,7 +136,7 @@ clockdisplay.addEventListener("click", function(){
 })
 
 //Enforces a 2-digit limit when changing time in the clock
-for(sel of document.getElementsByClassName("Tin")){
+for(let sel of document.getElementsByClassName("Tin")){
     sel.addEventListener('input', function(){
         //The line below take the whole string, selects every non-number, and replaces it with an empty string. Love you ChatGPT for explaining it :))
         this.value = this.value.replace(/\D/g, '');
