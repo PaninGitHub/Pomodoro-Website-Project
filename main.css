@@ -73,6 +73,8 @@ body {
 #time-input {
     border: 0;
 }
+#timebutton{
+}
 #timebutton.fade-out{
     opacity: 0;
     transition: opacity .2;

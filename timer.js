@@ -20,7 +20,6 @@ var time = settime;
 var state = "start";
 var thisInterval;
 
-
 //Sets how to display time
 function displayTime(){
     min = ~~(time / 60);
@@ -74,7 +73,7 @@ function runTimer(){
 //Start of the program
 displayTime()
 button.dataset.state = 'start'
-
+console.log(button.dataset)
 //Handles when the button is pressed
 button.addEventListener("click", function(){
     if (button.innerHTML == 'Stop'){
@@ -106,18 +105,18 @@ button.addEventListener("click", function(){
 
 //Handles when a key is pressed
 document.addEventListener('keydown', (e) => {
-    if(e.code === "ControlLeft" && (state == 'running' || state == 'paused')){
-        trans.typewrite(button.innerHTML, "Stop", .02, button);
+    if(e.code === "ControlLeft" && !e.repeat && button.dataset.intrans === "false" && (state == 'running' || state == 'paused')){
+        trans.typewrite(button.innerHTML, "Stop", .2, button);
     }
 });
 
 document.addEventListener('keyup', (e) => {
-    if(e.code === "ControlLeft" && button.innerHTML == 'Stop'){
+    if(e.code === "ControlLeft" && !e.repeat && button.dataset.intrans === "false" && (state == 'running' || state == 'paused')){
         if(state == 'running'){
-            trans.typewrite(button.innerHTML, "Pause", .02, button);
+            trans.typewrite(button.innerHTML, "Pause", .2, button);
         }
         else if(state == 'paused'){
-            trans.typewrite(button.innerHTML, "Unpause", .02, button);
+            trans.typewrite(button.innerHTML, "Unpause", .2, button);
         }
     }
 })
