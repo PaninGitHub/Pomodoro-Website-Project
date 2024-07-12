@@ -6,12 +6,6 @@
     * -inverse -> inverse transtiion (i.e. button transitioning from "Stop" to "Pause" when Ctrl is released)
  */
 
-function conflicitngTrans(type, ele){
-    if(ele.dataset.intrans != 'none'){
-
-    }
-}
-
 export const trans = {
     static(txt, ele)
     {

@@ -6,7 +6,11 @@ const statustext = document.getElementById("statustext")
 const clockdisplay = document.getElementById("time-display")
 const clockinput = document.getElementById("time-input")
 
+//Imports
 import {trans} from "./text.js";
+
+//Booleans
+var isCtrlUp = false;
 
 //Audio
 var audio = new Audio('https://cdn.discordapp.com/attachments/1094846471699976263/1258240181757022239/clock-alarm-8761.mp3?ex=668752fc&is=6686017c&hm=e8747124324b47b518782a6208cee22756a74b8d84f3413aff77e953b149d439&')
@@ -108,20 +112,12 @@ button.addEventListener("click", function(){
 
 //Handles when a key is pressed
 document.addEventListener('keydown', (e) => {
-    if(e.code === "ControlLeft" && !e.repeat && button.dataset.intrans === "none" && (state == 'running' || state == 'paused')){
-        //If the button is transitioning inversely, will prevent a conflicting normal transition from happening        
-        if (button.dataset.intrans !== "inverse")
+    if(e.code === "ControlLeft")
+    {
+        isCtrlUp = true;
+        if(!e.repeat && button.dataset.intrans === "none" && (state == 'running' || state == 'paused'))
         {
-            if (button.innerHTML == "Stop")
-            {
-                button.dataset.intrans = 'inverse';
-                trans.typewrite(button.innerHTML, "Pause", .1, button);
-            }
-            else
-            {
-                button.dataset.intrans = 'forward';
-                trans.typewrite(button.innerHTML, "Stop", .1, button);
-            }
+            trans.static('Stop', button);
         }
     }
 });
@@ -129,19 +125,16 @@ document.addEventListener('keydown', (e) => {
 //Handles whena  key is released
 document.addEventListener('keyup', (e) => {
     console.log('a');
-    if(e.code === "ControlLeft" && button.dataset.intrans === "none" && (state == 'running' || state == 'paused')){
-        //If the button is transitioning normally, will prevent a conflicting inverse transition from happening
-        if (button.dataset.intrans !== "forward")
-        {
-            button.dataset.intrans = 'inverse'
-            if(state == 'running')
-            {
-                trans.typewrite(button.innerHTML, "Pause", .1, button);
-            }
-            else if(state == 'paused')
-            {
-                trans.typewrite(button.innerHTML, "Unpause", .1, button);
-            }
+    if(e.code === "ControlLeft")
+    {
+        isCtrlUp = false;
+        if(button.dataset.intrans === "none" && (state == 'running' || state == 'paused')){
+          if(state == 'running'){
+            trans.static("Pause", button);
+          } 
+          if(state == 'paused'){
+            trans.static("Unpause", button);
+          } 
         }
     }
 })
