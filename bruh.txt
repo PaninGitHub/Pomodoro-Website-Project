@@ -1,0 +1,3 @@
+        if(ele.dataset.intrans != 'none'){
+            return;
+        }

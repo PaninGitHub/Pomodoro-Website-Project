@@ -20,6 +20,9 @@ var time = settime;
 var state = "start";
 var thisInterval;
 
+//Temporary Settings framework
+var transonctrl = 'typewriter'
+
 //Sets how to display time
 function displayTime(){
     min = ~~(time / 60);
@@ -105,18 +108,40 @@ button.addEventListener("click", function(){
 
 //Handles when a key is pressed
 document.addEventListener('keydown', (e) => {
-    if(e.code === "ControlLeft" && !e.repeat && button.dataset.intrans === "false" && (state == 'running' || state == 'paused')){
-        trans.typewrite(button.innerHTML, "Stop", .2, button);
+    if(e.code === "ControlLeft" && !e.repeat && button.dataset.intrans === "none" && (state == 'running' || state == 'paused')){
+        //If the button is transitioning inversely, will prevent a conflicting normal transition from happening        
+        if (button.dataset.intrans !== "inverse")
+        {
+            if (button.innerHTML == "Stop")
+            {
+                button.dataset.intrans = 'inverse';
+                trans.typewrite(button.innerHTML, "Pause", .1, button);
+            }
+            else
+            {
+                button.dataset.intrans = 'forward';
+                trans.typewrite(button.innerHTML, "Stop", .1, button);
+            }
+        }
     }
 });
 
+//Handles whena  key is released
 document.addEventListener('keyup', (e) => {
-    if(e.code === "ControlLeft" && !e.repeat && button.dataset.intrans === "false" && (state == 'running' || state == 'paused')){
-        if(state == 'running'){
-            trans.typewrite(button.innerHTML, "Pause", .2, button);
-        }
-        else if(state == 'paused'){
-            trans.typewrite(button.innerHTML, "Unpause", .2, button);
+    console.log('a');
+    if(e.code === "ControlLeft" && button.dataset.intrans === "none" && (state == 'running' || state == 'paused')){
+        //If the button is transitioning normally, will prevent a conflicting inverse transition from happening
+        if (button.dataset.intrans !== "forward")
+        {
+            button.dataset.intrans = 'inverse'
+            if(state == 'running')
+            {
+                trans.typewrite(button.innerHTML, "Pause", .1, button);
+            }
+            else if(state == 'paused')
+            {
+                trans.typewrite(button.innerHTML, "Unpause", .1, button);
+            }
         }
     }
 })
