@@ -29,7 +29,7 @@ body {
 }
 .start:hover {
     transition: 0.3s;
-    box-shadow: 0 6px #333;
+    box-shadow: 0 6px #555;
 }
 .background {
     animation: transitionIn 0.75s;
@@ -55,6 +55,19 @@ body {
 .time-input-hide {
     display: none;
 }
+.dot {
+    height: 12px;
+    width: 12px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    margin-top: 12px;
+    margin-left: 8px;
+    animation: transitionIn 1s;
+}
+.hide {
+    display: none;
+}
 #url {
     justify-self: end;
     color: white;
@@ -72,8 +85,6 @@ body {
 }
 #time-input {
     border: 0;
-}
-#timebutton{
 }
 #timebutton.fade-out{
     opacity: 0;
