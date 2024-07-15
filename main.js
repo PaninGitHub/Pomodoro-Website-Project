@@ -80,7 +80,6 @@ function setPDots(){
         let pdotClone = pdot.cloneNode(true);
         pomodots.appendChild(pdotClone);      
     }
-    pomodots.removeChild(pomodots.children[0])
 }
 
 function runTimer(){
@@ -141,6 +140,7 @@ function checkState(){
 //Shows all dots
 displayTime()
 setPDots()
+pomodots.removeChild(pomodots.children[0])
 button.dataset.state = 'start'
 
 
