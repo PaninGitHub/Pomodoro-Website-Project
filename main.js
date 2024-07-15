@@ -6,7 +6,7 @@ const statustext = document.getElementById("statustext");
 const clockdisplay = document.getElementById("time-display");
 const clockinput = document.getElementById("time-input");
 const pomodots = document.getElementById("pomodots");
-const pdot = pomodots.children[0].cloneNode();
+const pdot = pomodots.children[0]
 var pdotscur;
 
 //Imports
@@ -64,6 +64,7 @@ function timerDone(){
     clearInterval(thisInterval);
     pomodots.removeChild(pomodots.children[0]);
     pdotscur -= 1
+    console.log(pdotscur)
     if(pdotscur <= 0){
         button.innerHTML = "Restart"
         state = "done"
@@ -73,7 +74,11 @@ function timerDone(){
 function setPDots(){
     pdotscur = s.amtOfPDots;
     for(let i = 0; i < s.amtOfPDots; i++){
-        pomodots.appendChild(pdot);
+        //The dots only clone is a clone is made in the for loop;
+        //If you put the below line outside the for loop, it won't work
+        //Dumbass
+        let pdotClone = pdot.cloneNode(true);
+        pomodots.appendChild(pdotClone);      
     }
     pomodots.removeChild(pomodots.children[0])
 }
