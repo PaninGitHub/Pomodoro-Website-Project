@@ -9,6 +9,8 @@ const pomodots = document.getElementById("pomodots");
 const pdot = pomodots.children[0]
 var pdotscur;
 
+
+
 //Imports
 import {trans} from "./transitions.js";
 import {s} from "./config.js"
@@ -23,12 +25,42 @@ var timerring = new Audio('../audio/clock-alarm-8761.mp3')
 var timer;
 var min;
 var sec;
-var settime = 1500;
+var settime = 0;
 var time = settime;
 var state = "start";
 var thisInterval;
+var this_cycle = [];
 
 //Functions
+function startOfTimer(){
+    updateCycle()
+    settime = s.wb_dur[this_cycle[0]]
+    time = settime
+    displayTime()
+    setPDots()
+}
+
+function importColorScheme(){
+    var style = document.createElement('style')
+    style.id = "styleid"
+    style.innerHTML = "ok"
+}
+
+function updateCycle(){
+    this_cycle = [];
+    for(let i = 0; i < s.amtOfPDots; i++){
+        for(let j = 0; j < s.wb_cycle.length; j++){
+            this_cycle.push(s.wb_cycle[j])
+        }
+    }
+}
+
+function updateDots(){
+    for(let i = 0; i < amtOfPDots; i++){
+        
+    }
+}   
+
 function displayTime(){
     min = ~~(time / 60);
     sec = time % 60;
@@ -59,13 +91,14 @@ function timerDone(){
     statustext.style.opacity = '1';
     state = "start"
     button.innerHTML = "Start";
-    time = settime;
+    pomodots.removeChild(pomodots.children[0]);
+    this_cycle.splice(0, 1)
+    time = 0;
     displayTime()
     clearInterval(thisInterval);
-    pomodots.removeChild(pomodots.children[0]);
     pdotscur -= 1
-    console.log(pdotscur)
-    if(pdotscur <= 0){
+    console.log(this_cycle.length)
+    if(this_cycle.length <= 0){
         button.innerHTML = "Restart"
         state = "done"
     }
@@ -74,11 +107,13 @@ function timerDone(){
 function setPDots(){
     pdotscur = s.amtOfPDots;
     for(let i = 0; i < s.amtOfPDots; i++){
+        for(let j = 0; j < s.wb_cycle.length; j++){
         //The dots only clone is a clone is made in the for loop;
         //If you put the below line outside the for loop, it won't work
-        //Dumbass
         let pdotClone = pdot.cloneNode(true);
+        pdotClone.classList.add(s.wb_cycle[j])
         pomodots.appendChild(pdotClone);      
+        }
     }
 }
 
@@ -123,9 +158,7 @@ function checkState(){
     else if (state == 'done'){
         state = 'start'
         clearInterval(thisInterval);
-        time = settime;
-        setPDots()
-        displayTime()
+        startOfTimer()
         button.dataset.state = 'start'
         trans.static("Start", button);
     }
@@ -138,8 +171,7 @@ function checkState(){
 /* */
 
 //Shows all dots
-displayTime()
-setPDots()
+startOfTimer()
 pomodots.removeChild(pomodots.children[0])
 button.dataset.state = 'start'
 
