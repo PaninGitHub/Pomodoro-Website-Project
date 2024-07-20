@@ -8,7 +8,7 @@ export const s =
     //How many pomodoro cycles is wanted
     amtOfPDots: 1,
     //What are the work and breaks cycle
-    wb_cycle: ['w', 'sb', 'w'],
+    wb_cycle: ['w', 'sb', 'lb', 'w'],
     //Duration of work and break cycles
     wb_dur: {
         'w': 1,

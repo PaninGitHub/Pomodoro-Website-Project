@@ -65,6 +65,9 @@ body {
     margin-left: 8px;
     animation: transitionIn 1s;
 }
+.dot.shadow{
+    box-shadow: 0px 0px 4px 4px rgba(255, 255, 255, .15);
+}
 .dot.w {
     background-color: #586A6A;
 }

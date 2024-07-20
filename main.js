@@ -33,7 +33,6 @@ var this_cycle = [];
 //Functions
 function startOfTimer(){
     updateCycle()
-    console.log(s.wb_dur[this_cycle[0]])
     if(s.wb_dur[this_cycle[0]] != undefined){
         settime = s.wb_dur[this_cycle[0]]
     }
@@ -70,10 +69,10 @@ function displayTime(){
     disSec.innerHTML = sec.toString().padStart(2, '0');
 }
 
-function setTime(){
-    let thisHour = Number(document.getElementById("hour-in").value);
-    let thisMin = Number(document.getElementById("min-in").value);
-    let thisSec = Number(document.getElementById("sec-in").value);
+function setTimeByInput(){
+    let thisHour = Number(inHr.value);
+    let thisMin = Number(inMin.value);
+    let thisSec = Number(inSec.value);
     [thisSec, thisMin, thisHour].forEach((element) => {
         if(element == ""){
             element = 0;
@@ -90,17 +89,26 @@ function setTime(){
 }
 
 function timerDone(){
+    console.log(pomodots.children)
+    console.log(this_cycle.length)
     timerring.play()
     statustext.style.opacity = '1';
     state = "start"
     button.innerHTML = "Start";
     if(pomodots.children.length != 0){
         pomodots.removeChild(pomodots.children[0]);
+        if(pomodots.children.length > 0){
+            pomodots.children[0].classList.add('shadow')
+        }
         this_cycle.splice(0, 1)
-        time = 0;
+        if(s.wb_dur[this_cycle[0]] != undefined){
+            time = s.wb_dur[this_cycle[0]]
+        }
+        else{
+            console.log(`Error: Duration is invalid for this peroid ${this_cycle[0]}`)
+        }
         displayTime()
         pdotscur -= 1
-        console.log(this_cycle.length)
         clearInterval(thisInterval);
     }
     else{
@@ -129,6 +137,9 @@ function setPDots(){
                 console.log(`Error: Peroid ${element} is not recongized` )
             }
         });
+    }
+    if(pomodots.children.length >= 1){
+        pomodots.children[0].classList.add('shadow')
     }
 }
 
@@ -170,7 +181,7 @@ function checkState(){
     {
         state = 'start'
         trans.static("Start", button);
-        setTime();
+        setTimeByInput();
         clockdisplay.classList.replace("time-display-hide", "time-display-show")
         clockinput.classList.replace("time-input-show", "time-input-hide")
     }
@@ -191,10 +202,9 @@ function checkState(){
 /* */
 
 //Shows all dots
-startOfTimer()
 pomodots.removeChild(pomodots.children[0])
+startOfTimer()
 button.dataset.state = 'start'
-console.log(pomodots.children.length)
 
 //Handles when the button is pressed
 button.addEventListener("click", function(){
@@ -218,7 +228,6 @@ document.addEventListener('keydown', (e) => {
 
 //Handles whena  key is released
 document.addEventListener('keyup', (e) => {
-    console.log('a');
     if(e.code === "ControlLeft")
     {
         isCtrlUp = false;
