@@ -74,6 +74,22 @@ body {
 .hide {
     display: none;
 }
+.settings_icon {
+    height: 2em;
+    display: block;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    align-self: flex-end;
+    animation: fadeIn 1s;
+    animation-timing-function: ease-in;
+    transition: .25s;
+    rotate: 0deg;
+}
+.settings_icon:hover{
+    transition: .25s;
+    rotate: 35deg;
+}
 #url {
     justify-self: end;
     color: white;
@@ -105,5 +121,23 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity : 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes rotate {
+    from {
+        rotate: 0;
+    }
+    to {
+        rotate: 35;
     }
 }

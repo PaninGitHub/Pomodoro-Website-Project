@@ -19,35 +19,36 @@
         crossorigin="anonymous">
         </script>
     <body>
-            <div class="background">
-                <div class="timer">
-                    <div class="clock">
-                        <!--The timer display-->
-                        <div class="time-display-show" id="time-display">
-                            <span class="timenum Tdis" id="min-dis"> 00 </span> : <span class="timenum display" id="sec-dis"> 00 </span>
-                        </div>
-                        <!--The timer input selection-->
-                        <div class="time-input-hide" id="time-input">
-                            <!--I love timenum tim!!!! Btw Tin means time input and Tdis means time display.-->
-                            <input class="timenum Tin" id="hour-in" type="num" max="99" placeholder="00" size="2"> : 
-                            <input class="timenum Tin" id="min-in" type="num" max="99" placeholder="00" size="2"> : 
-                            <input class="timenum Tin" id="sec-in" type="num" max="99" placeholder="00" size="2">
-                        </div>
+            <img src="./icons/settings.png" alt="Settings" class="settings_icon" id="set_icon">
+        <div class="background">
+            <div class="timer">
+                <div class="clock">
+                    <!--The timer display-->
+                    <div class="time-display-show" id="time-display">
+                        <span class="timenum Tdis" id="min-dis"> 00 </span> : <span class="timenum display" id="sec-dis"> 00 </span>
                     </div>
-                    <div style="clear:both">
-                        <button type="button" class="start" id="timebutton" data-intrans="none">
-                            Start
-                        </button>
+                    <!--The timer input selection-->
+                    <div class="time-input-hide" id="time-input">
+                        <!--I love timenum tim!!!! Btw Tin means time input and Tdis means time display.-->
+                        <input class="timenum Tin" id="hour-in" type="num" max="99" placeholder="00" size="2"> : 
+                        <input class="timenum Tin" id="min-in" type="num" max="99" placeholder="00" size="2"> : 
+                        <input class="timenum Tin" id="sec-in" type="num" max="99" placeholder="00" size="2">
                     </div>
                 </div>
+                <div style="clear:both">
+                    <button type="button" class="start" id="timebutton" data-intrans="none">
+                        Start
+                    </button>
+                </div>
             </div>
-            <div id="pomodots">
-                <span id="pdot" class="dot"></span>
-            </div>
-            <div id="url">
-                www.simplidoro.com
-            </div>
-            <div id='statustext'></div>
+        </div>
+        <div id="pomodots">
+            <span id="pdot" class="dot"></span>
+        </div>
+        <div id="url">
+            www.simplidoro.com
+        </div>
+        <div id='statustext'></div>
     </body>
     <script src="main.js" type="module" defer></script>
     </head>
