@@ -55,6 +55,9 @@ body {
 .time-input-hide {
     display: none;
 }
+.zethnum{
+    color: red;
+}
 .dot {
     height: 12px;
     width: 12px;

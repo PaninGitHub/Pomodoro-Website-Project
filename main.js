@@ -11,11 +11,11 @@ const clockinput = document.getElementById("time-input");
 const pomodots = document.getElementById("pomodots");
 const pdot = pomodots.children[0]
 const timerring = new Audio('../audio/clock-alarm-8761.mp3');
+const zeth = new Audio('../New_Recording.m4a')
 var pdotscur;
 
 //Booleans
 var isCtrlUp = false;
-
 
 //Imports
 import {trans} from "./transitions.js";
@@ -31,6 +31,17 @@ var thisInterval;
 var this_cycle = [];
 
 //Functions
+function doTheZeth(){
+    setInterval(function() {
+        let now = new Date();
+        document.getElementById('hr-zeth').innerHTML = now.getHours().toString().padStart(2, '0');
+        document.getElementById('min-zeth').innerHTML = now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('sec-zeth').innerHTML = now.getSeconds().toString().padStart(2, '0');
+        if(now.getSeconds() == '0'){
+        }
+    }, 100)
+}
+
 function startOfTimer(){
     updateCycle()
     if(s.wb_dur[this_cycle[0]] != undefined){
@@ -91,7 +102,7 @@ function setTimeByInput(){
 function timerDone(){
     console.log(pomodots.children)
     console.log(this_cycle.length)
-    timerring.play()
+    zeth.play()
     statustext.style.opacity = '1';
     state = "start"
     button.innerHTML = "Start";
@@ -205,6 +216,7 @@ function checkState(){
 pomodots.removeChild(pomodots.children[0])
 startOfTimer()
 button.dataset.state = 'start'
+doTheZeth();
 
 //Handles when the button is pressed
 button.addEventListener("click", function(){
