@@ -31,16 +31,6 @@ var thisInterval;
 var this_cycle = [];
 
 //Functions
-function doTheZeth(){
-    setInterval(function() {
-        let now = new Date();
-        document.getElementById('hr-zeth').innerHTML = now.getHours().toString().padStart(2, '0');
-        document.getElementById('min-zeth').innerHTML = now.getMinutes().toString().padStart(2, '0');
-        document.getElementById('sec-zeth').innerHTML = now.getSeconds().toString().padStart(2, '0');
-        if(now.getSeconds() == '0'){
-        }
-    }, 100)
-}
 
 function startOfTimer(){
     updateCycle()
@@ -216,7 +206,6 @@ function checkState(){
 pomodots.removeChild(pomodots.children[0])
 startOfTimer()
 button.dataset.state = 'start'
-doTheZeth();
 
 //Handles when the button is pressed
 button.addEventListener("click", function(){

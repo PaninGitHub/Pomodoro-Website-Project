@@ -7,6 +7,7 @@
 }
 body { 
     background-color: black;
+    background-image: url(https://scontent.xx.fbcdn.net/v/t1.15752-9/450358587_1292108221766635_3417838001512324824_n.jpg?stp=dst-jpg_p320x320&_nc_cat=102&ccb=1-7&_nc_sid=0024fc&_nc_ohc=DRIF2tZfc6gQ7kNvgFEf428&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_Q7cD1QHRmtaxifFOo9DQjQj4AkFCluOELC1s_FlwekUjy8E-BQ&oe=66C3FC9A);
     color: white;
     font-family: Nixie One, Source Code Pro, Arial, Helvetica, sans-serif;
     height: 100vh;
@@ -37,7 +38,8 @@ body {
     font-weight: 200;
     font-size: 3.5em;
     border-radius: 12px;
-    background-color: rgba(20, 20, 20, 1)
+    background-color: rgba(20, 20, 20, 1);
+    box-shadow: 0px 0px 4px 4px rgba(0,0,0,.55);
 }
 .timenum {
     outline: none;
