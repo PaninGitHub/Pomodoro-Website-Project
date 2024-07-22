@@ -12,6 +12,7 @@ const pomodots = document.getElementById("pomodots");
 const pdot = pomodots.children[0]
 const timerring = new Audio('../audio/clock-alarm-8761.mp3');
 const zeth = new Audio('../New_Recording.m4a')
+
 var pdotscur;
 
 //Booleans
@@ -29,6 +30,7 @@ var time = settime;
 var state = "start";
 var thisInterval;
 var this_cycle = [];
+var this_peroids = [];
 
 //Functions
 
@@ -46,6 +48,11 @@ function importColorScheme(){
     var style = document.createElement('style')
     style.id = "styleid"
     style.innerHTML = "ok"
+}
+
+function updatePeroids(){
+    //First, scan to see what elements are present.
+    //Afterwards, create a new object based on the statistics
 }
 
 function updateCycle(){
@@ -123,23 +130,58 @@ function timerDone(){
     }
 }
 
+function appendDot(element){
+    //The dots only clone is a clone is made in the for loop;
+    //If you put the below line outside the for loop, it won't work  
+    if(s.reg_peroids.includes(element)){
+        let pdotClone = pdot.cloneNode(true);
+        pdotClone.classList.add(element)
+        pomodots.appendChild(pdotClone);  
+    }    
+    else{
+        console.log(`Error: Peroid ${element} is not recongized` )
+    }
+}
+
 function setPDots(){
     pdotscur = s.amtOfPDots;
-    for(let i = 0; i < s.amtOfPDots; i++){
-        s.wb_cycle.forEach(element => {
-            if(s.reg_peroids.includes(element)){
-                //The dots only clone is a clone is made in the for loop;
-                //If you put the below line outside the for loop, it won't work
-                let pdotClone = pdot.cloneNode(true);
-                pdotClone.classList.add(element)
-                pomodots.appendChild(pdotClone);  
-            }    
-            else{
-                console.log(`Error: Peroid ${element} is not recongized` )
+    let checkpoint = 0;
+    for(let i = 0; i < s.amtOfPDots; i++)
+    {
+        s.wb_cycle.forEach(element => 
+        {
+            //Checks for multipltive cycles ("3x", "10x", "6x", etc.)
+            if(element.charAt(element.length - 1) == "x" && element.length > 1){
+                let isMulti = true;
+                for(i = 0; i < element.length - 1; i++)
+                {
+                    let charCode = element.charCodeAt(i);
+                    if(!(charCode >= 48 && charCode <= 57))
+                    {
+                        isMulti = false;
+                        break;
+                    }
+                }
+                if(isMulti == true)
+                {
+                    console.log(`Multiply by ${element.substring(0, element.length - 1)}`)
+                    for(let j = 0; j < Number(element.substring(0, element.length - 1)) - 1; j++)
+                    {
+                        for(let k = checkpoint; k < s.wb_cycle.indexOf(element); k++)
+                        {
+                            appendDot(s.wb_cycle[k])
+                        }
+                    }
+                    checkpoint = s.wb_cycle.indexOf(element);
+                }
             }
+            //Appends elements otherwise
+            console.log('aids')
+            appendDot(element)
         });
     }
-    if(pomodots.children.length >= 1){
+    if(pomodots.children.length >= 1)
+    {
         pomodots.children[0].classList.add('shadow')
     }
 }
