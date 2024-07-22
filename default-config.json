@@ -6,6 +6,7 @@
     "notificationForAll": "Default",
     "glowFirstElement": true,
     "background-image": "",
+    "default-alarm-sound": "",
     "peroids": [
         {
             "name": "Work",
@@ -41,6 +42,24 @@
             "autoStart": false
         }
     ],
+    "elements": [
+        {
+            "name": "Timer Background",
+            "id": "timer-background",
+            "start-transition": "Default",
+            "background-transparency": 0.1,
+            "glow-transparency": 0.20,
+            "glow-color": "#FFFFFF"
+        },
+        {
+            "name": "Button",
+            "id": "timebutton",
+            "start-transition": "Default",
+            "text-color": "#FFFFFF",
+            "background-color": "#bbbbbb"
+        }
+    ],
     "cycle": ["w", "w", "w", "sb", "3x", "lb"],
+    "currentCycle": [],
     "amtOfCycles": 2
 }

@@ -12,9 +12,9 @@ export const s =
     wb_cycle: ['w', 'sb', '3x', 'w', 'lb', '2x'],
     //Duration of work and break cycles:
     wb_dur: {
-        'w': 20 * 60,
-        'sb': 10 * 60,
-        'lb': 5 * 60,
+        'w': 1,
+        'sb': 2,
+        'lb': 3,
     },
 
     ////Colors:

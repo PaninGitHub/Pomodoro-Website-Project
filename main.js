@@ -35,13 +35,13 @@ var this_peroids = [];
 //Functions
 
 function startOfTimer(){
-    updateCycle()
     if(s.wb_dur[this_cycle[0]] != undefined){
         settime = s.wb_dur[this_cycle[0]]
     }
+    setDotsandCycle()
     time = settime
     displayTime()
-    setPDots()
+    console.log(this_cycle)
 }
 
 function importColorScheme(){
@@ -59,6 +59,9 @@ function updateCycle(){
     this_cycle = [];
     for(let i = 0; i < s.amtOfPDots; i++){
         for(let j = 0; j < s.wb_cycle.length; j++){
+            if(isMultiCycle(s.wb_cycle[j])){
+                
+            }
             this_cycle.push(s.wb_cycle[j])
         }
     }
@@ -143,7 +146,26 @@ function appendDot(element){
     }
 }
 
-function setPDots(){
+function isMultiCycle(element){
+    let isMulti = false;
+    if(element.charAt(element.length - 1) == "x" && element.length > 1){
+        isMulti = true;
+        for(let i = 0; i < element.length - 1; i++)
+        {
+            let charCode = element.charCodeAt(i);
+            if(!(charCode >= 48 && charCode <= 57))
+            {
+                isMulti = false;
+                break;
+            }
+        }   
+    }
+    return(isMulti)
+}
+
+function setDotsandCycle(){
+    this_cycle = [];
+    //SEts time at the beginning
     pdotscur = s.amtOfPDots;
     let checkpoint = 0;
     for(let i = 0; i < s.amtOfPDots; i++)
@@ -151,39 +173,32 @@ function setPDots(){
         s.wb_cycle.forEach(element => 
         {
             //Checks for multipltive cycles ("3x", "10x", "6x", etc.)
-            if(element.charAt(element.length - 1) == "x" && element.length > 1){
-                let isMulti = true;
-                for(i = 0; i < element.length - 1; i++)
+            if(isMultiCycle(element))
+            {
+                for(let j = 0; j < Number(element.substring(0, element.length - 1) - 1); j++)
                 {
-                    let charCode = element.charCodeAt(i);
-                    if(!(charCode >= 48 && charCode <= 57))
+                    for(let k = checkpoint; k < s.wb_cycle.indexOf(element); k++)
                     {
-                        isMulti = false;
-                        break;
+                        appendDot(s.wb_cycle[k])
+                        this_cycle.push(s.wb_cycle[k])
                     }
                 }
-                if(isMulti == true)
-                {
-                    console.log(`Multiply by ${element.substring(0, element.length - 1)}`)
-                    for(let j = 0; j < Number(element.substring(0, element.length - 1)) - 1; j++)
-                    {
-                        for(let k = checkpoint; k < s.wb_cycle.indexOf(element); k++)
-                        {
-                            appendDot(s.wb_cycle[k])
-                        }
-                    }
-                    checkpoint = s.wb_cycle.indexOf(element);
-                }
+                checkpoint = s.wb_cycle.indexOf(element) + 1;
+                return;
             }
             //Appends elements otherwise
-            console.log('aids')
             appendDot(element)
+            this_cycle.push(element)
         });
+    }
+    if(s.wb_dur[this_cycle[0]] != undefined){
+        settime = s.wb_dur[this_cycle[0]]
     }
     if(pomodots.children.length >= 1)
     {
         pomodots.children[0].classList.add('shadow')
     }
+
 }
 
 function runTimer(){
