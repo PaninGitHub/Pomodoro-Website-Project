@@ -10,6 +10,7 @@ const clockdisplay = document.getElementById("time-display");
 const clockinput = document.getElementById("time-input");
 const pomodots = document.getElementById("pomodots");
 const pdot = pomodots.children[0]
+const peroidtitle = document.getElementById('peroidtitle')
 const timerring = new Audio('../audio/clock-alarm-8761.mp3');
 const zeth = new Audio('../New_Recording.m4a')
 
@@ -93,14 +94,27 @@ function updateCycle(){
 }
 
 function updateDots(restart){
-    if(restart == true){
+    if(restart){
         while(pomodots.length > 0){
             pomodots.removeChild(pomodots.children[0])
         }
+        this_peroids.forEach ((dot) => {
+            appendDot(dot)
+            
+        })
+        return;
     }
-    this_peroids.forEach ((dot) => {
-        appendDot(dot)
-    })
+    else{
+        //Checks whether any new dots were added
+        //Shows any new dots
+        for(let i = 0; i < c.max_peroids; i++)
+        {
+            if(pomodots.children[i].classList.contains('hide'))
+            {
+                pomodots.children[i].classList.remove('hide')
+            }
+        }
+    }
 }   
 
 function displayTime(){
@@ -144,9 +158,11 @@ function timerDone(){
         } else {
             console.log(`Error: Duration is invalid for this peroid ${this_peroids[0].name}`)
         }
+        peroidtitle.innerHTML = tp.name;
         displayTime()
         pdotscur -= 1
         clearInterval(thisInterval);
+        updateDots(false)
     }
     else{
         time = settime;
@@ -155,16 +171,22 @@ function timerDone(){
     }
     if(this_peroids.length <= 0){
         button.innerHTML = "Restart"
+        peroidtitle.classList.add('hide')
         state = "done"
     }
 }
 
-function appendDot(element){
+function appendDot(dot){
     //The dots only clone is a clone is made in the for loop;
     //If you put the below line outside the for loop, it won't work  
-    if(c.registered_peroids.includes(element.label)){
+    if(c.registered_peroids.includes(dot.label)){
         let pdotClone = pdot.cloneNode(true);
-        pdotClone.classList.add(element.label)
+        pdotClone.classList.add(dot.label)
+        pdotClone.id = `pdot${pomodots.children.length + 1}`
+        dot.dot_id = `pdot${pomodots.children.length + 1}`
+        if(pomodots.children.length + 1> c.max_peroids){
+            pdotClone.classList.add('hide')
+        }
         pomodots.appendChild(pdotClone);  
     }    
     else
@@ -191,6 +213,7 @@ function isMultiCycle(element){
 }
 
 function setPeroids(){
+    let dot_limit = c.max_peroids
     this_peroids = [];
     //SEts time at the beginning
     pdotscur = c.amtOfCycles;
@@ -199,7 +222,7 @@ function setPeroids(){
         let checkpoint = 0;
         c.cycle.forEach(element => 
         {
-               //Checks for multipltive cycles ("3x", "10x", "6x", etc.)
+            //Checks for multipltive cycles ("3x", "10x", "6x", etc.)
             if(isMultiCycle(element))
             {
                 for(let j = 0; j < Number(element.substring(0, element.length - 1) - 1); j++)
@@ -219,9 +242,10 @@ function setPeroids(){
     if(tp.duration != undefined){
         settime = tp.duration
     }
-    if(pomodots.children.length >= 1)
+    if(this_peroids.length >= 1)
     {
-        pomodots.children[0].classList.add('shadow')
+        peroidtitle.classList.add('show')
+        peroidtitle.innerHTML = tp.name
     }
     updateDots(true)
 }
@@ -285,7 +309,7 @@ function checkState(){
 /* */
 
 //Loads JSON
-fetch(`./user-config.json`).then(res => res.json()).then(data => {
+fetch(`./default-config.json`).then(res => res.json()).then(data => {
     c = data;
     pomodots.removeChild(pomodots.children[0]);
     startOfTimer();

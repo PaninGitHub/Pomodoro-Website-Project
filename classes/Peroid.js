@@ -8,6 +8,8 @@ export class Peroid {
         this.color = color;
         this.description = description;
         this.sound = sound;
+        this.dot_id = "";
+        this.isShown = true;
         this.pushNotifications = true;
         this.shouldAutostart = false;
     }

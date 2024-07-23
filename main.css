@@ -82,6 +82,10 @@ body {
 .hide {
     display: none;
 }
+.shiftleft {
+    transition: .4s;
+    right: 12px;
+}
 .settings_icon {
     height: 2em;
     display: block;
@@ -119,6 +123,16 @@ body {
 #timebutton.fade-out{
     opacity: 0;
     transition: opacity .2;
+}
+
+#peroidtitle{
+    animation: transitionIn 1s;
+    display: block;
+    position: relative;
+    margin-top: .25%;
+    left: 3px;
+    font-weight: 500;
+    font-size: 1.2em;
 }
 
 @keyframes transitionIn {

@@ -60,5 +60,5 @@
     ],
     "cycle": ["w", "sb"],
     "currentCycle": [],
-    "amtOfCycles": 1
+    "amtOfCycles": 10
 }
