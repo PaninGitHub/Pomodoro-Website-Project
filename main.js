@@ -19,8 +19,8 @@ var pdotscur;
 var isCtrlUp = false;
 
 //Imports
+import { Peroid } from "./classes/Peroid.js";
 import {trans} from "./transitions.js";
-import {s} from "./config.js"
 
 //Sets variables. Time represents seconds in this case
 var min;
@@ -29,19 +29,44 @@ var settime = 0;
 var time = settime;
 var state = "start";
 var thisInterval;
-var this_cycle = [];
 var this_peroids = [];
+var c = '';
+
 
 //Functions
+function addPeroid(l){
+    let peroid = ""
+    for(let i = 0; i < c.peroids.length; i++){
+        if(c.peroids[i].label == l){
+            peroid = c.peroids[i]
+            break;
+        }
+    }
+    this_peroids.push(
+        new Peroid(
+            peroid.name,
+            peroid.label,
+            peroid.duration,
+            peroid.color,
+            peroid.description,
+            peroid.sound
+        )
+    )
+}
+
+function removePeroid(l){
+    pomodots.removeChild(pomodots.children[l]);
+    this_peroids;
+    if(pomodots.children.length > 0 && !pomodots.children[0].classList.contains('shadow')){
+        pomodots.children[0].classList.add('shadow');
+    }
+    this_peroids.splice(0, 1);
+}
 
 function startOfTimer(){
-    if(s.wb_dur[this_cycle[0]] != undefined){
-        settime = s.wb_dur[this_cycle[0]]
-    }
-    setDotsandCycle()
+    setPeroids()
     time = settime
     displayTime()
-    console.log(this_cycle)
 }
 
 function importColorScheme(){
@@ -56,21 +81,26 @@ function updatePeroids(){
 }
 
 function updateCycle(){
-    this_cycle = [];
-    for(let i = 0; i < s.amtOfPDots; i++){
-        for(let j = 0; j < s.wb_cycle.length; j++){
-            if(isMultiCycle(s.wb_cycle[j])){
+    this_peroids = [];
+    for(let i = 0; i < c.amtOfCycles; i++){
+        for(let j = 0; j < c.cycle.length; j++){
+            if(isMultiCycle(c.cycle[j])){
                 
             }
-            this_cycle.push(s.wb_cycle[j])
+            this_peroids.push(c.cycle[j])
         }
     }
 }
 
-function updateDots(){
-    for(let i = 0; i < amtOfPDots; i++){
-        
+function updateDots(restart){
+    if(restart == true){
+        while(pomodots.length > 0){
+            pomodots.removeChild(pomodots.children[0])
+        }
     }
+    this_peroids.forEach ((dot) => {
+        appendDot(dot)
+    })
 }   
 
 function displayTime(){
@@ -100,23 +130,19 @@ function setTimeByInput(){
 }
 
 function timerDone(){
-    console.log(pomodots.children)
-    console.log(this_cycle.length)
-    zeth.play()
+    this_peroids[0].playSound();
+    removePeroid(0)
+    let tp = this_peroids[0] //tp -> This Peroid
     statustext.style.opacity = '1';
     state = "start"
     button.innerHTML = "Start";
     if(pomodots.children.length != 0){
-        pomodots.removeChild(pomodots.children[0]);
-        if(pomodots.children.length > 0){
-            pomodots.children[0].classList.add('shadow')
-        }
-        this_cycle.splice(0, 1)
-        if(s.wb_dur[this_cycle[0]] != undefined){
-            time = s.wb_dur[this_cycle[0]]
-        }
-        else{
-            console.log(`Error: Duration is invalid for this peroid ${this_cycle[0]}`)
+        //Note: Need to possibly add error handlier if it calls the wrong peroid or smth.
+        if(tp.duration != undefined){
+            settime = tp.duration
+            time = settime
+        } else {
+            console.log(`Error: Duration is invalid for this peroid ${this_peroids[0].name}`)
         }
         displayTime()
         pdotscur -= 1
@@ -127,7 +153,7 @@ function timerDone(){
         displayTime()
         clearInterval(thisInterval);
     }
-    if(this_cycle.length <= 0){
+    if(this_peroids.length <= 0){
         button.innerHTML = "Restart"
         state = "done"
     }
@@ -136,13 +162,14 @@ function timerDone(){
 function appendDot(element){
     //The dots only clone is a clone is made in the for loop;
     //If you put the below line outside the for loop, it won't work  
-    if(s.reg_peroids.includes(element)){
+    if(c.registered_peroids.includes(element.label)){
         let pdotClone = pdot.cloneNode(true);
-        pdotClone.classList.add(element)
+        pdotClone.classList.add(element.label)
         pomodots.appendChild(pdotClone);  
     }    
-    else{
-        console.log(`Error: Peroid ${element} is not recongized` )
+    else
+    {
+        console.log(`Warning: Peroid ${element} is not listed as a valid peroid` )
     }
 }
 
@@ -163,42 +190,40 @@ function isMultiCycle(element){
     return(isMulti)
 }
 
-function setDotsandCycle(){
-    this_cycle = [];
+function setPeroids(){
+    this_peroids = [];
     //SEts time at the beginning
-    pdotscur = s.amtOfPDots;
-    let checkpoint = 0;
-    for(let i = 0; i < s.amtOfPDots; i++)
+    pdotscur = c.amtOfCycles;
+    for(let i = 0; i < c.amtOfCycles; i++)
     {
-        s.wb_cycle.forEach(element => 
+        let checkpoint = 0;
+        c.cycle.forEach(element => 
         {
-            //Checks for multipltive cycles ("3x", "10x", "6x", etc.)
+               //Checks for multipltive cycles ("3x", "10x", "6x", etc.)
             if(isMultiCycle(element))
             {
                 for(let j = 0; j < Number(element.substring(0, element.length - 1) - 1); j++)
                 {
-                    for(let k = checkpoint; k < s.wb_cycle.indexOf(element); k++)
+                    for(let k = checkpoint; k < c.cycle.indexOf(element); k++)
                     {
-                        appendDot(s.wb_cycle[k])
-                        this_cycle.push(s.wb_cycle[k])
+                        addPeroid(c.cycle[k])
                     }
                 }
-                checkpoint = s.wb_cycle.indexOf(element) + 1;
+                checkpoint = c.cycle.indexOf(element) + 1;
                 return;
             }
-            //Appends elements otherwise
-            appendDot(element)
-            this_cycle.push(element)
+            addPeroid(element)
         });
     }
-    if(s.wb_dur[this_cycle[0]] != undefined){
-        settime = s.wb_dur[this_cycle[0]]
+    let tp = this_peroids[0] //tp -> This Peroid
+    if(tp.duration != undefined){
+        settime = tp.duration
     }
     if(pomodots.children.length >= 1)
     {
         pomodots.children[0].classList.add('shadow')
     }
-
+    updateDots(true)
 }
 
 function runTimer(){
@@ -259,11 +284,14 @@ function checkState(){
 /*So exciting!!
 /* */
 
-//Shows all dots
-pomodots.removeChild(pomodots.children[0])
-startOfTimer()
-button.dataset.state = 'start'
-
+//Loads JSON
+fetch(`./user-config.json`).then(res => res.json()).then(data => {
+    c = data;
+    pomodots.removeChild(pomodots.children[0]);
+    startOfTimer();
+    button.dataset.state = 'start';
+    console.log(this_peroids)
+})
 //Handles when the button is pressed
 button.addEventListener("click", function(){
     checkState()

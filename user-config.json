@@ -5,16 +5,17 @@
     "showTimeEstimated": false,
     "notificationForAll": "Default",
     "glowFirstElement": true,
-    "background_image": "",
+    "background_image": "'https://scontent-hou1-1.cdninstagram.com/v/t51.29350-15/452592298_453431434268491_6777720324837368787_n.jpg?stp=dst-jpg_e35&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMTcweDIwODAuc2RyLmYyOTM1MCJ9&_nc_ht=scontent-hou1-1.cdninstagram.com&_nc_cat=107&_nc_ohc=dk2Qsb7rgP8Q7kNvgGNYCOq&edm=AJYBtmQBAAAA&ccb=7-5&ig_cache_key=MzQxODA4MDMwOTAyNTQ3MDYwNQ%3D%3D.2-ccb7-5&oh=00_AYAP0oPx86MQmzAP8CivC14MV3giCItsuhuig6KT1pMtDQ&oe=66A4FC45&_nc_sid=691684'",
     "default_alarm-sound": "",
     "registered_peroids":["w", "sb", "lb"],
     "peroids": [
         {
             "name": "Work",
             "label": "w",
-            "duration": 1500,
+            "duration": 1,
             "color": "#586A6A",
-            "description": "Focus on tasks.",
+            "sound": "https://cdn.discordapp.com/attachments/1246297683677810708/1264448422287769653/New_Recording.m4a?ex=669fe31c&is=669e919c&hm=94b1fd899e421a5f83fbe85beacc443c34bb190aad1c398a6b7f491538dd343f&",
+            "description": "Focus on tasks",
             "notificationWhenFinished": true,
             "overtime": false,
             "autoStart": false
@@ -22,9 +23,9 @@
         {
             "name": "Short Break",
             "label": "sb",
-            "duration": 300,
+            "duration": 2,
             "color": "#DAD4EF",
-            "description": "Stand up and strech.",
+            "description": "Stand up and strech",
             "notificationWhenFinished": true,
             "overtime": false,
             "autoStart": false
@@ -32,8 +33,7 @@
         {
             "name": "Long Break",
             "label": "lb",
-            "duration": 1200,
-            "sound": "https://cdn.discordapp.com/attachments/1246297683677810708/1264448422287769653/New_Recording.m4a?ex=669fe31c&is=669e919c&hm=94b1fd899e421a5f83fbe85beacc443c34bb190aad1c398a6b7f491538dd343f&",
+            "duration": 3,
             "color": "#DAD4EF",
             "description": "Take a nap or go for a walk!",
             "notificationWhenFinished": true,
@@ -58,7 +58,7 @@
             "background-color": "#bbbbbb"
         }
     ],
-    "cycle": ["w", "w", "w", "sb", "3x", "lb"],
+    "cycle": ["w", "sb"],
     "currentCycle": [],
     "amtOfCycles": 1
 }
