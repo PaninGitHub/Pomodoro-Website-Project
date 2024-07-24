@@ -60,6 +60,21 @@ body {
 .zethnum{
     color: red;
 }
+.settings_aside_class{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: -300px;
+    background-color: gray;
+    height: 100vh;
+    width: 300px;
+    transition: .4s;
+    transform: translate(-100%);
+}
+.settings_aside_class.settings_shown{
+    transform: translate(0%);
+    transition: .4s;
+}
 .dot {
     height: 12px;
     width: 12px;
@@ -86,19 +101,35 @@ body {
     transition: .4s;
     right: 12px;
 }
-.settings_icon {
+.settings_icon_class {
+    z-index: 11;
     height: 2em;
+    align-self: flex-end;
+    transition: .25s;
+    rotate: 0deg;
+}
+#settings_icon_background {
+    z-index: 10;
     display: block;
     position: absolute;
     top: 1em;
     right: 1em;
-    align-self: flex-end;
+    background-color: #bbbbbb0f;
+    border-radius: 20%;
+    padding: 8px;
+    transition: .25s;
     animation: fadeIn 1s;
     animation-timing-function: ease-in;
-    transition: .25s;
-    rotate: 0deg;
 }
-.settings_icon:hover{
+#settings_icon.settings_shown {
+    transition: .25s;
+    rotate: 65deg;
+}
+#settings_icon_background.settings_shown {
+    transition: .25s;
+    background-color: #bbb;
+}
+#settings_icon:hover{
     transition: .25s;
     rotate: 35deg;
 }

@@ -11,8 +11,9 @@ const clockinput = document.getElementById("time-input");
 const pomodots = document.getElementById("pomodots");
 const pdot = pomodots.children[0]
 const peroidtitle = document.getElementById('peroidtitle')
-const timerring = new Audio('../audio/clock-alarm-8761.mp3');
-const zeth = new Audio('../New_Recording.m4a')
+const settings_icon_background = document.getElementById('settings_icon_background')
+const settings_icon = document.getElementById('settings_icon')
+const settings_aside = document.getElementById('settings_aside')
 
 var pdotscur;
 
@@ -336,7 +337,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-//Handles whena  key is released
+//Handles when a key is released
 document.addEventListener('keyup', (e) => {
     if(e.code === "ControlLeft")
     {
@@ -352,6 +353,22 @@ document.addEventListener('keyup', (e) => {
           } 
         }
     }
+})
+
+//Handles when settings button is clicked
+settings_icon_background.addEventListener('click', function(){
+    //Checks classes of the setting background to determine if settings is shown or not
+    [settings_icon, 
+    settings_icon_background, 
+    settings_aside].forEach((element) => {
+    if(!settings_icon_background.classList.contains("settings_shown")){
+        element.classList.add("settings_shown")
+    }
+    else{
+        element.classList.remove("settings_shown")
+    }
+}   )
+    
 })
 
 //Changing time in clock
