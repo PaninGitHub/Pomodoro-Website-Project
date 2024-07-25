@@ -4,6 +4,8 @@ const disSec = document.getElementById("sec-dis");
 const inSec = document.getElementById("sec-in")
 const inMin = document.getElementById("min-in")
 const inHr = document.getElementById("hour-in")
+const estMin = document.getElementById("min-est")
+const estHr = document.getElementById("hr-est")
 const button = document.getElementById("timebutton");
 const statustext = document.getElementById("statustext");
 const clockdisplay = document.getElementById("time-display");
@@ -103,6 +105,9 @@ function updateDots(restart){
             appendDot(dot)
             
         })
+        if(pomodots.children.length > 0){
+            pomodots.children[0].classList.add('shadow');
+        }
         return;
     }
     else{
@@ -117,12 +122,40 @@ function updateDots(restart){
         }
     }
 }   
-
 function displayTime(){
     min = ~~(time / 60);
     sec = time % 60;
     disMin.innerHTML = min.toString().padStart(2, '0');
     disSec.innerHTML = sec.toString().padStart(2, '0');
+    updateTimeEstimate()
+}
+
+function updateTimeEstimate(){
+    let now = new Date();
+    let hr = now.getHours();
+    let min = now.getMinutes();
+    let sec = now.getSeconds();
+    let timeest = hr * 3600 + min * 60 + sec + time;
+    for(let i = 1; i < this_peroids.length; i++){
+        timeest += this_peroids[i].duration
+    }
+    if(c.est_time_format == "24-hr"){
+        estHr.innerHTML = ~~(timeest / 3600).toString().padStart(2, '0');
+        estMin.innerHTML = ~~((timeest % 3600) / 60).toString().padStart(2, '0');
+    }
+    else{
+        estHr.innerHTML = ~~((timeest % 43200) / 3600)
+        estMin.innerHTML = ~~((timeest % 3600) / 60)
+        if(~~(timeest / 43200) % 2 == 0){
+            estMin.innerHTML = (estMin.innerHTML.toString().padStart(2, '0') + " AM");
+        }
+        else{
+            estMin.innerHTML = (estMin.innerHTML.toString().padStart(2, '0') + " PM");
+        }
+    }
+    //Idk if Javascript will delete these element, but ima do it manually just to avoid any memory leaks
+    now, hr, min, sec, timeest = null;
+
 }
 
 function setTimeByInput(){
@@ -310,12 +343,13 @@ function checkState(){
 /* */
 
 //Loads JSON
-fetch(`./default-config.json`).then(res => res.json()).then(data => {
+fetch(`./configs/default-config.json`).then(res => res.json()).then(data => {
     c = data;
     pomodots.removeChild(pomodots.children[0]);
     startOfTimer();
     button.dataset.state = 'start';
-    console.log(this_peroids)
+    console.log(`Loaded in the following peroids: ${this_peroids}`)
+    setInterval(updateTimeEstimate, 1000)
 })
 //Handles when the button is pressed
 button.addEventListener("click", function(){

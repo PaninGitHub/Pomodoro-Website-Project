@@ -45,12 +45,44 @@
         <div id="pomodots">
             <span class="dot" id="pdot"></span>
         </div>
-        <div id="peroidtitle">Work</div>
+        <div class="belowtimer">
+            <div id="peroidtitle">Work</div>
+            <div class="clock est" id="time-est-div"> 
+                Time EST: <span class="timenum" id="hr-est"> 00 </span> : <span class="timenum" id="min-est"> 00 </span>
+            </div>
+        </div>
         <div id="url">
             www.simplidoro.com
         </div>
         <div id='statustext'></div>
-        <aside class="settings_aside_class" id="settings_aside">Hello World</aside> 
+        <aside class="settings_aside_class" id="settings_aside">
+            <div class="settings_container">
+                <legend class="settings_cat_title" id="general_settings_legend">General Settings</legend>
+                <div class="settings_cat">
+                    <div class="i_settings_cat" id="s_time_est">
+                        Show Time Estimate
+                        <label class="s_toggle" for="s_toggle_1">
+                            <input class="s_toggle__input" type="checkbox" id="s_toggle_1">
+                            <div class="s_toggle__fill"></div>
+                        </label>
+                    </div>
+                    <div class="i_settings_cat" id="s_time_est_format">
+                        Time Estimate Format
+                        <select class="s_dropdown" id="s_dropdown_2">
+                            <option value="12-hr">12 Hour</option>
+                            <option value="24-hr">24 Hour</option>
+                        </select>
+                    </div>
+                    <div class="i_settings_cat" id="s_time_est_format">
+                        First Dot Glows
+                        <label class="s_toggle" for="s_toggle_3">
+                            <input class="s_toggle__input" type="checkbox" id="s_toggle_3">
+                            <div class="s_toggle__fill"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </aside> 
     </body>
     <script src="main.js" type="module" defer></script>
     </head>

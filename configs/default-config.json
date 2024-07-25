@@ -1,7 +1,7 @@
 {
     "pomodoro_mode": "classic",
     "whenTimerFinished": "Default",
-    "hour_format": "12-hr",
+    "est_time_format": "12-hr",
     "showTimeEstimated": false,
     "notificationForAll": "Default",
     "glowFirstElement": true,
@@ -13,7 +13,7 @@
         {
             "name": "Work",
             "label": "w",
-            "duration": 1,
+            "duration": 60,
             "color": "#586A6A",
             "description": "Focus on tasks",
             "notificationWhenFinished": true,
@@ -23,7 +23,7 @@
         {
             "name": "Short Break",
             "label": "sb",
-            "duration": 2,
+            "duration": 60,
             "color": "#DAD4EF",
             "description": "Stand up and strech",
             "notificationWhenFinished": true,
@@ -33,7 +33,7 @@
         {
             "name": "Long Break",
             "label": "lb",
-            "duration": 3,
+            "duration": 120,
             "color": "#DAD4EF",
             "description": "Take a nap or go for a walk!",
             "notificationWhenFinished": true,
@@ -58,7 +58,7 @@
             "background-color": "#bbbbbb"
         }
     ],
-    "cycle": ["sb", "w"],
+    "cycle": ["lb", "1x", "sb", "w", "2x"],
     "currentCycle": [],
-    "amtOfCycles": 2
+    "amtOfCycles": 1
 }
