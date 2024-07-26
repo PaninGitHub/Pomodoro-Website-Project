@@ -10,12 +10,14 @@ const button = document.getElementById("timebutton");
 const statustext = document.getElementById("statustext");
 const clockdisplay = document.getElementById("time-display");
 const clockinput = document.getElementById("time-input");
+const estdisplay = document.getElementById("time-est-div");
 const pomodots = document.getElementById("pomodots");
 const pdot = pomodots.children[0]
 const peroidtitle = document.getElementById('peroidtitle')
 const settings_icon_background = document.getElementById('settings_icon_background')
 const settings_icon = document.getElementById('settings_icon')
 const settings_aside = document.getElementById('settings_aside')
+
 
 var pdotscur;
 
@@ -97,6 +99,7 @@ function updateCycle(){
 }
 
 function updateDots(restart){
+    try{
     if(restart){
         while(pomodots.length > 0){
             pomodots.removeChild(pomodots.children[0])
@@ -113,13 +116,26 @@ function updateDots(restart){
     else{
         //Checks whether any new dots were added
         //Shows any new dots
+        if(pomodots.children.length > c.max_peroids){
         for(let i = 0; i < c.max_peroids; i++)
         {
+            console.log(i)
             if(pomodots.children[i].classList.contains('hide'))
             {
                 pomodots.children[i].classList.remove('hide')
             }
+        }}
+    }} catch (error){ console.error(error)}
+    //Just in case there is no pomodots
+    try{
+        if(!pomodots.children[0].classList.contains('shadow') && c.glowFirstElement){
+            pomodots.children[0].classList.add('shadow')
         }
+        else if(pomodots.children[0].classList.contains('shadow') && !c.glowFirstElement){
+            pomodots.children[0].classList.remove('shadow')
+        }
+    } catch (error){
+        console.error(error)
     }
 }   
 function displayTime(){
@@ -130,7 +146,19 @@ function displayTime(){
     updateTimeEstimate()
 }
 
+function initalizeSettings(){
+    glowFirstElement.checked = c.glowFirstElement
+    showTimeEstimated.checked = c.showTimeEstimated
+}
+
 function updateTimeEstimate(){
+    console.log(c.showTimeEstimated, estdisplay.classList.contains('hide'))
+    if(c.showTimeEstimated && estdisplay.classList.contains('hide')){
+        estdisplay.classList.remove('hide')
+    }
+    else if(!c.showTimeEstimated && !estdisplay.classList.contains('hide')){
+        estdisplay.classList.add('hide')
+    }
     let now = new Date();
     let hr = now.getHours();
     let min = now.getMinutes();
@@ -350,7 +378,13 @@ fetch(`./configs/default-config.json`).then(res => res.json()).then(data => {
     button.dataset.state = 'start';
     console.log(`Loaded in the following peroids: ${this_peroids}`)
     setInterval(updateTimeEstimate, 1000)
-})
+    initalizeSettings()
+}).catch(error => {
+    // Handle any errors that occur during the fetch
+    console.error('Error fetching or parsing data:', error);
+});
+
+
 //Handles when the button is pressed
 button.addEventListener("click", function(){
     checkState()
@@ -429,3 +463,23 @@ for(let sel of document.getElementsByClassName("Tin")){
         this.value = this.value.slice(0, 2);
 })
 }
+
+////Event Handler for Elements
+//Settings
+const showTimeEstimated  = document.getElementById("s_toggle_1")
+showTimeEstimated.addEventListener('change', function(){
+    c.showTimeEstimated = showTimeEstimated.checked;
+    updateTimeEstimate()
+})
+
+const est_time_format  = document.getElementById("s_dropdown_2")
+est_time_format.addEventListener('change', function(){
+    c.est_time_format = est_time_format.value;
+    updateTimeEstimate()
+})
+
+const glowFirstElement  = document.getElementById("s_toggle_3")
+glowFirstElement.addEventListener('change', function(){
+    c.glowFirstElement = glowFirstElement.checked;
+    updateDots(false)
+})
