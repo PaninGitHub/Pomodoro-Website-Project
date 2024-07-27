@@ -58,7 +58,43 @@
             "background-color": "#bbbbbb"
         }
     ],
-    "cycle": ["lb", "1x", "sb", "w", "1000x"],
+    "cycle": ["w", "sb", "3x", "lb"],
+    "cycle_presets": 
+    [
+        {
+            "name": "Classic",
+            "cycle": ["w", "sb", "3x", "lb"],
+            "peroids": [
+                {
+                    "label": "w",
+                    "duration": 1500
+                },
+                {
+                    "label": "sb",
+                    "duration": 360
+                },
+                {
+                    "label": "lb",
+                    "duration": 1200
+                }    
+            ]
+        },
+        {
+            "name": "Classic - No Long Breaks",
+            "cycle": ["w", "sb", "3x"],
+            "peroids": [
+                {
+                    "label": "w",
+                    "duration": 1500
+                },
+                {
+                    "label": "sb",
+                    "duration": 360
+                }   
+            ]
+        }
+
+    ],
     "currentCycle": [],
     "amtOfCycles": 1
 }

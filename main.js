@@ -13,11 +13,13 @@ const clockinput = document.getElementById("time-input");
 const estdisplay = document.getElementById("time-est-div");
 const pomodots = document.getElementById("pomodots");
 const pdot = pomodots.children[0]
+const tps_display = document.getElementById("s_p_option") //Stands for time peroid settings
 const peroidtitle = document.getElementById('peroidtitle')
 const settings_icon_background = document.getElementById('settings_icon_background')
 const settings_icon = document.getElementById('settings_icon')
 const settings_aside = document.getElementById('settings_aside')
-
+const settings_set_time_dur = document.getElementById('s_p_1')
+//const jsonData = require('./configs/default-config.json')
 
 var pdotscur;
 
@@ -36,6 +38,7 @@ var time = settime;
 var state = "start";
 var thisInterval;
 var this_peroids = [];
+var registered_peroids = [];
 var c = '';
 
 
@@ -86,6 +89,15 @@ function updatePeroids(){
     //Afterwards, create a new object based on the statistics
 }
 
+function registerPeroids(){
+    registered_peroids = [];
+    this_peroids.forEach((peroid) => {
+        if(!registered_peroids.includes(peroid.label)){
+            registered_peroids.push(peroid.label)
+        }
+    })
+}
+
 function updateCycle(){
     this_peroids = [];
     for(let i = 0; i < c.amtOfCycles; i++){
@@ -119,7 +131,6 @@ function updateDots(restart){
         if(pomodots.children.length > c.max_peroids){
         for(let i = 0; i < c.max_peroids; i++)
         {
-            console.log(i)
             if(pomodots.children[i].classList.contains('hide'))
             {
                 pomodots.children[i].classList.remove('hide')
@@ -149,10 +160,31 @@ function displayTime(){
 function initalizeSettings(){
     glowFirstElement.checked = c.glowFirstElement
     showTimeEstimated.checked = c.showTimeEstimated
+    registered_peroids.forEach((element) => {
+        let peroid = getPeroidByLabel(element)
+        let tpsClone = tps_display.cloneNode(true);
+        tpsClone.value = element
+        tpsClone.innerHTML = peroid.name
+        s_p_dropdown.appendChild(tpsClone); 
+    }) 
+}
+
+function getPeroidByLabel(value){
+    for(let i = 0; i < c.peroids.length; i++){
+        if(c.peroids[i].label == value){
+            return(c.peroids[i])
+            break;
+        }
+    }
+}
+
+function updateSettings(){
+    if(settings_set_time_dur.value != ""){
+        //Change HTML based on settings
+    }
 }
 
 function updateTimeEstimate(){
-    console.log(c.showTimeEstimated, estdisplay.classList.contains('hide'))
     if(c.showTimeEstimated && estdisplay.classList.contains('hide')){
         estdisplay.classList.remove('hide')
     }
@@ -309,6 +341,7 @@ function setPeroids(){
         peroidtitle.classList.add('show')
         peroidtitle.innerHTML = tp.name
     }
+    registerPeroids()
     updateDots(true)
 }
 
@@ -376,9 +409,10 @@ fetch(`./configs/default-config.json`).then(res => res.json()).then(data => {
     pomodots.removeChild(pomodots.children[0]);
     startOfTimer();
     button.dataset.state = 'start';
-    console.log(`Loaded in the following peroids: ${this_peroids}`)
+    console.log(`Loaded in ${this_peroids.length} peroids`)
     setInterval(updateTimeEstimate, 1000)
     initalizeSettings()
+    console.log(jsonData)
 }).catch(error => {
     // Handle any errors that occur during the fetch
     console.error('Error fetching or parsing data:', error);
@@ -472,10 +506,18 @@ showTimeEstimated.addEventListener('change', function(){
     updateTimeEstimate()
 })
 
-const est_time_format  = document.getElementById("s_dropdown_2")
+const est_time_format = document.getElementById("s_dropdown_2")
 est_time_format.addEventListener('change', function(){
     c.est_time_format = est_time_format.value;
     updateTimeEstimate()
+})
+
+const s_p_dropdown = document.getElementById("s_p_dropdown") 
+var tps_selected = ""
+s_p_dropdown.addEventListener('change', function(){
+    document.getElementById("spdot").style.backgroundColor = getPeroidByLabel(s_p_dropdown.value).color;
+    tps_selected = getPeroidByLabel(s_p_dropdown.value)
+    settings_set_time_dur.value = tps_selected.duration
 })
 
 const glowFirstElement  = document.getElementById("s_toggle_3")
