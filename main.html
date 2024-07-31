@@ -18,9 +18,10 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
         crossorigin="anonymous">
         </script>
-    <body>
+    <body id="body">
         <div id="settings_icon_background"><img src="./icons/settings.png" alt="Settings" class="settings_icon_class" id="settings_icon"></div>
-        <div class="background" id="timer-background"> 
+        <div class="background">
+        <div class="timer-background" id="timer-background"> 
             <div class="timer" id="timer-div">
                 <div class="clock" id="clock-div">
                     <!--The timer display-->
@@ -51,14 +52,22 @@
                 Time EST: <span class="timenum" id="hr-est"> 00 </span> : <span class="timenum" id="min-est"> 00 </span>
             </div>
         </div>
+        </div>
         <div id="url">
             www.simplidoro.com
         </div>
         <div id='statustext'></div>
-        <aside class="settings_aside_class" id="settings_aside">
+        <aside class="settings_aside_class settings_shown" id="settings_aside">
             <div class="settings_container">
                 <legend class="settings_cat_title" id="general_settings_legend">General Settings</legend>
                 <div class="settings_cat">
+                    <div class="i_settings_cat" id="s_str_img">
+                        Stretch Image?
+                        <label class="s_toggle" for="s_toggle_5">
+                            <input class="s_toggle__input" type="checkbox" id="s_toggle_5">
+                            <div class="s_toggle__fill"></div>
+                        </label>
+                    </div>
                     <div class="i_settings_cat" id="s_time_est">
                         Show Time Estimate
                         <label class="s_toggle" for="s_toggle_1">
@@ -74,12 +83,20 @@
                             <option value="24-hr">24 Hour</option>
                         </select>
                     </div>
-                    <div class="i_settings_cat" id="s_time_est_format">
+                    <div class="i_settings_cat" id="s_first_dot_glows">
                         First Dot Glows
                         <label class="s_toggle" for="s_toggle_3">
                             <input class="s_toggle__input" type="checkbox" id="s_toggle_3">
                             <div class="s_toggle__fill"></div>
                         </label>
+                    </div>
+                    <div class="i_settings_cat" id="s_override_n">
+                        Notification when Timer Ends?
+                        <select class="s_dropdown" id="s_dropdown_4">
+                            <option value="default">Default</option>
+                            <option value="always">Always</option>
+                            <option value="never">Never</option>
+                        </select>
                     </div>
                 </div>
             <legend class="settings_cat_title" id="time_settings_legend">Time Period Settings <div id="spdot" class="s_p_dot"></div></legend>

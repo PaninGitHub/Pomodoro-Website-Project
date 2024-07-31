@@ -43,6 +43,18 @@ var c = '';
 
 
 //Functions
+
+function askNotificationPermission() {
+    // Check if the browser supports notifications
+    if (!("Notification" in window)) {
+      console.log("This browser does not support notifications.");
+      return;
+    }
+    Notification.requestPermission().then((result) => {
+        console.log(`Notifications are ${result}`);
+      });
+}   
+
 function addPeroid(l){
     let peroid = ""
     for(let i = 0; i < c.peroids.length; i++){
@@ -58,7 +70,8 @@ function addPeroid(l){
             peroid.duration,
             peroid.color,
             peroid.description,
-            peroid.sound
+            peroid.sound,
+            peroid.notificationWhenFinished
         )
     )
 }
@@ -118,7 +131,6 @@ function updateDots(restart){
         }
         this_peroids.forEach ((dot) => {
             appendDot(dot)
-            
         })
         if(pomodots.children.length > 0){
             pomodots.children[0].classList.add('shadow');
@@ -139,8 +151,10 @@ function updateDots(restart){
     }} catch (error){ console.error(error)}
     //Just in case there is no pomodots
     try{
-        if(!pomodots.children[0].classList.contains('shadow') && c.glowFirstElement){
-            pomodots.children[0].classList.add('shadow')
+        const thisChild = pomodots.children[0]
+        if(!thisChild.classList.contains('shadow') && c.glowFirstElement){
+           thisChild.classList.add('shadow');
+           //thisChild.style.boxShadow = `0px 0px 4px 4px ${getComputedStyle(thisChild).backgroundColor}`;
         }
         else if(pomodots.children[0].classList.contains('shadow') && !c.glowFirstElement){
             pomodots.children[0].classList.remove('shadow')
@@ -160,6 +174,8 @@ function displayTime(){
 function initalizeSettings(){
     glowFirstElement.checked = c.glowFirstElement
     showTimeEstimated.checked = c.showTimeEstimated
+    shouldStretchBackgroundImage.checked = c.stretch_background_image
+    stretchBackgroundImage(c.stretch_background_image)
     registered_peroids.forEach((element) => {
         let peroid = getPeroidByLabel(element)
         let tpsClone = tps_display.cloneNode(true);
@@ -218,6 +234,35 @@ function updateTimeEstimate(){
 
 }
 
+function isValidURL(url) {
+    try {
+        const urlObject = new URL(url);
+        // Additional checks, if necessary.
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+function uploadBackgroundIMG(url){
+    if(isValidURL(c.background_image)){
+        document.getElementById("body").style.backgroundImage = `url(${url})`
+        console.log(document.getElementById("body"))
+    }
+    else{
+        console.log("Failed to load background image: URL is invalid")
+    }
+}
+
+function stretchBackgroundImage(bool){
+    if(bool){
+        document.getElementById("body").style.backgroundSize = "cover"
+    }
+    else{
+        document.getElementById("body").style.backgroundSize = "auto auto"
+    }
+}
+
 function setTimeByInput(){
     let thisHour = Number(inHr.value);
     let thisMin = Number(inMin.value);
@@ -238,9 +283,11 @@ function setTimeByInput(){
 }
 
 function timerDone(){
-    this_peroids[0].playSound();
-    removePeroid(0)
     let tp = this_peroids[0] //tp -> This Peroid
+    tp.playSound();
+    tp.pushNotification(c.notificationForAll)
+    removePeroid(0)
+    tp = this_peroids[0]
     statustext.style.opacity = '1';
     state = "start"
     button.innerHTML = "Start";
@@ -257,6 +304,7 @@ function timerDone(){
         pdotscur -= 1
         clearInterval(thisInterval);
         updateDots(false)
+        
     }
     else{
         time = settime;
@@ -273,19 +321,18 @@ function timerDone(){
 function appendDot(dot){
     //The dots only clone is a clone is made in the for loop;
     //If you put the below line outside the for loop, it won't work  
-    if(c.registered_peroids.includes(dot.label)){
+    if(registered_peroids.includes(dot.label)){
+        console.log(dot)
         let pdotClone = pdot.cloneNode(true);
         pdotClone.classList.add(dot.label)
         pdotClone.id = `pdot${pomodots.children.length + 1}`
         dot.dot_id = `pdot${pomodots.children.length + 1}`
+        pdotClone.style.setProperty('--bg-color', `${dot.color}`)
+        pdotClone.style.setProperty('--bg-color-shadow', `${dot.color}8f`)
         if(pomodots.children.length + 1> c.max_peroids){
             pdotClone.classList.add('hide')
         }
         pomodots.appendChild(pdotClone);  
-    }    
-    else
-    {
-        console.log(`Warning: Peroid ${element} is not listed as a valid peroid` )
     }
 }
 
@@ -404,15 +451,18 @@ function checkState(){
 /* */
 
 //Loads JSON
+
+
 fetch(`./configs/default-config.json`).then(res => res.json()).then(data => {
     c = data;
+    uploadBackgroundIMG(c.background_image)
+    askNotificationPermission()
     pomodots.removeChild(pomodots.children[0]);
     startOfTimer();
     button.dataset.state = 'start';
     console.log(`Loaded in ${this_peroids.length} peroids`)
     setInterval(updateTimeEstimate, 1000)
     initalizeSettings()
-    console.log(jsonData)
 }).catch(error => {
     // Handle any errors that occur during the fetch
     console.error('Error fetching or parsing data:', error);
@@ -502,26 +552,37 @@ for(let sel of document.getElementsByClassName("Tin")){
 //Settings
 const showTimeEstimated  = document.getElementById("s_toggle_1")
 showTimeEstimated.addEventListener('change', function(){
-    c.showTimeEstimated = showTimeEstimated.checked;
+    c.showTimeEstimated = this.checked;
     updateTimeEstimate()
 })
 
 const est_time_format = document.getElementById("s_dropdown_2")
 est_time_format.addEventListener('change', function(){
-    c.est_time_format = est_time_format.value;
+    c.est_time_format = this.value;
     updateTimeEstimate()
 })
 
 const s_p_dropdown = document.getElementById("s_p_dropdown") 
 var tps_selected = ""
 s_p_dropdown.addEventListener('change', function(){
-    document.getElementById("spdot").style.backgroundColor = getPeroidByLabel(s_p_dropdown.value).color;
-    tps_selected = getPeroidByLabel(s_p_dropdown.value)
+    document.getElementById("spdot").style.backgroundColor = getPeroidByLabel(this.value).color;
+    tps_selected = getPeroidByLabel(this.value)
     settings_set_time_dur.value = tps_selected.duration
 })
 
-const glowFirstElement  = document.getElementById("s_toggle_3")
+const glowFirstElement = document.getElementById("s_toggle_3")
 glowFirstElement.addEventListener('change', function(){
-    c.glowFirstElement = glowFirstElement.checked;
+    c.glowFirstElement = this.checked;
     updateDots(false)
+})
+
+const globalNotificationPush = document.getElementById("s_dropdown_4")
+globalNotificationPush.addEventListener('change', function(){
+    c.notificationForAll = this.value
+})
+
+const shouldStretchBackgroundImage  = document.getElementById("s_toggle_5")
+shouldStretchBackgroundImage.addEventListener('change', function(){
+    c.stretch_background_image = this.checked
+    stretchBackgroundImage(c.stretch_background_image)
 })

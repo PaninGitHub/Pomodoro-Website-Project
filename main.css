@@ -1,6 +1,7 @@
 body { 
     background-color: black;
     background-image: url();
+    background-size: auto auto;
     color: white;
     font-family: Nixie One, Source Code Pro, Arial, Helvetica, sans-serif;
     height: 100vh;
@@ -47,6 +48,14 @@ body {
 }
 .background {
     animation: transitionIn 0.75s;
+    display: block;
+    padding: 5px 5px;
+    border-radius: 12px;
+    background-color: rgba(20, 20, 20, .4);
+    box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, .4);
+}
+.timer-background {
+    animation: transitionIn 0.75s;
     padding: 20px 20px;
     font-weight: 200;
     font-size: 3.5em;
@@ -76,21 +85,16 @@ body {
 .dot {
     height: 12px;
     width: 12px;
-    background-color: #bbb;
+    --bg-color: #3408db;
+    --bg-color-shadow: #408eb2ef;
+    background-color: var(--bg-color);
     border-radius: 50%;
-    display: inline-block;
     margin-top: 12px;
     margin-left: 8px;
     animation: transitionIn 1s;
 }
 .dot.shadow{
-    box-shadow: 0px 0px 4px 4px rgba(255, 255, 255, .15);
-}
-.dot.w {
-    background-color: #586A6A;
-}
-.dot.sb {
-    background-color: #DAD4EF;
+    box-shadow: 0px 0px 4px 4px var(--bg-color-shadow);
 }
 .hide {
     display: none;
@@ -104,7 +108,7 @@ body {
     top: 0;
     bottom: 0;
     right: -400px;
-    background-color: #3330302f;
+    background-color: #333030d0;
     height: 100vh;
     width: 400px;
     transition: .4s;
@@ -124,7 +128,7 @@ body {
     flex-direction: column;
     align-items: center;
     margin: 10px;
-    background-color: #586A6A2f;
+    background-color: #586a6a9f;
     padding:5px 5px;
     border-radius: 10px;
     width: 350px;
@@ -228,6 +232,10 @@ body {
     border-radius: var(--border-radius);
     background: #dddddd;
     transition: background 0.1s;
+}
+#pomodots {
+    display:flex;
+    justify-content: center;
 }
 #settings_icon_background {
     z-index: 10;
