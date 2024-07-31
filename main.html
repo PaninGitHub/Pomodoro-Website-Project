@@ -20,7 +20,7 @@
         </script>
     <body id="body">
         <div id="settings_icon_background"><img src="./icons/settings.png" alt="Settings" class="settings_icon_class" id="settings_icon"></div>
-        <div class="background">
+        <div id="background" class="background hide">
         <div class="timer-background" id="timer-background"> 
             <div class="timer" id="timer-div">
                 <div class="clock" id="clock-div">
@@ -61,12 +61,19 @@
             <div class="settings_container">
                 <legend class="settings_cat_title" id="general_settings_legend">General Settings</legend>
                 <div class="settings_cat">
+                    <div class="i_settings_cat" id="s_img_url">
+                        Image URL?
+                        <input class="s_input" id="s_input_6">
+                        </label>
+                    </div>
                     <div class="i_settings_cat" id="s_str_img">
                         Stretch Image?
-                        <label class="s_toggle" for="s_toggle_5">
-                            <input class="s_toggle__input" type="checkbox" id="s_toggle_5">
-                            <div class="s_toggle__fill"></div>
-                        </label>
+                        <select class="s_dropdown" id="s_dropdown_5">
+                            <option value="select">Select</option>
+                            <option value="default">Default</option>
+                            <option value="stretch">Stretch</option>
+                            <option value="fit">Fit</option>
+                        </select>
                     </div>
                     <div class="i_settings_cat" id="s_time_est">
                         Show Time Estimate

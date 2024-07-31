@@ -174,7 +174,6 @@ function displayTime(){
 function initalizeSettings(){
     glowFirstElement.checked = c.glowFirstElement
     showTimeEstimated.checked = c.showTimeEstimated
-    shouldStretchBackgroundImage.checked = c.stretch_background_image
     stretchBackgroundImage(c.stretch_background_image)
     registered_peroids.forEach((element) => {
         let peroid = getPeroidByLabel(element)
@@ -247,19 +246,26 @@ function isValidURL(url) {
 function uploadBackgroundIMG(url){
     if(isValidURL(c.background_image)){
         document.getElementById("body").style.backgroundImage = `url(${url})`
-        console.log(document.getElementById("body"))
+        if(document.getElementById('background').classList.contains("hide")){
+            document.getElementById('background').classList.remove("hide")
+        }
     }
     else{
         console.log("Failed to load background image: URL is invalid")
     }
 }
 
-function stretchBackgroundImage(bool){
-    if(bool){
-        document.getElementById("body").style.backgroundSize = "cover"
-    }
-    else{
-        document.getElementById("body").style.backgroundSize = "auto auto"
+function stretchBackgroundImage(set){
+   switch (set){
+        case "default": 
+            document.getElementById("body").style.backgroundSize = "auto auto"
+            break;
+        case "stretch":
+            document.getElementById("body").style.backgroundSize = "100% 100%"
+            break;
+        case "fit":
+            document.getElementById("body").style.backgroundSize = "cover"
+            break;
     }
 }
 
@@ -322,7 +328,6 @@ function appendDot(dot){
     //The dots only clone is a clone is made in the for loop;
     //If you put the below line outside the for loop, it won't work  
     if(registered_peroids.includes(dot.label)){
-        console.log(dot)
         let pdotClone = pdot.cloneNode(true);
         pdotClone.classList.add(dot.label)
         pdotClone.id = `pdot${pomodots.children.length + 1}`
@@ -581,8 +586,14 @@ globalNotificationPush.addEventListener('change', function(){
     c.notificationForAll = this.value
 })
 
-const shouldStretchBackgroundImage  = document.getElementById("s_toggle_5")
-shouldStretchBackgroundImage.addEventListener('change', function(){
-    c.stretch_background_image = this.checked
+const alterBackgroundImage  = document.getElementById("s_dropdown_5")
+alterBackgroundImage.addEventListener('change', function(){
+    c.stretch_background_image = this.value
     stretchBackgroundImage(c.stretch_background_image)
+})
+
+const backgroundIMG = document.getElementById("s_input_6")
+backgroundIMG.addEventListener('change', function(){
+    c.background_image = this.value
+    uploadBackgroundIMG(c.background_image)
 })
