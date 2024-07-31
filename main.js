@@ -222,10 +222,16 @@ function updateTimeEstimate(){
         estHr.innerHTML = ~~((timeest % 43200) / 3600)
         estMin.innerHTML = ~~((timeest % 3600) / 60)
         if(~~(timeest / 43200) % 2 == 0){
+            if(~~(timeest / 3600) % 24 == 0){
+                estHr.innerHTML = 12
+            }
             estMin.innerHTML = (estMin.innerHTML.toString().padStart(2, '0') + " AM");
         }
         else{
             estMin.innerHTML = (estMin.innerHTML.toString().padStart(2, '0') + " PM");
+            if(~~(timeest / 3600) % 24 == 12){
+                estHr.innerHTML = 12
+            }
         }
     }
     //Idk if Javascript will delete these element, but ima do it manually just to avoid any memory leaks
