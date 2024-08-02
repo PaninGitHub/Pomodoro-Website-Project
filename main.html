@@ -19,7 +19,7 @@
         crossorigin="anonymous">
         </script>
     <body id="body">
-        <div id="settings_icon_background"><img src="./icons/settings.png" alt="Settings" class="settings_icon_class" id="settings_icon"></div>
+        <div id="settings_icon_background"><img src="./assets/icons/settings.png" alt="Settings" class="settings_icon_class" id="settings_icon"></div>
         <div id="background" class="background hide">
         <div class="timer-background" id="timer-background"> 
             <div class="timer" id="timer-div">
@@ -105,6 +105,14 @@
                             <option value="never">Never</option>
                         </select>
                     </div>
+                    <div class="i_settings_cat" id="s_override_n">
+                        Timer Mode
+                        <select class="s_dropdown" id="s_dropdown_7">
+                            <option value="classic">Classic</option>
+                            <option value="override">Override</option>
+                            <option value="timer">Timer</option>
+                        </select>
+                    </div>
                 </div>
             <legend class="settings_cat_title" id="time_settings_legend">Time Period Settings <div id="spdot" class="s_p_dot"></div></legend>
                 <div class="settings_cat">
@@ -118,6 +126,6 @@
             </div>
         </aside> 
     </body>
-    <script src="main.js" type="module" defer></script>
+    <script src="scripts/main.js" type="module" defer></script>
     </head>
 </html>

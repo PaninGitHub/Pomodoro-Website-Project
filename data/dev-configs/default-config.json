@@ -6,16 +6,18 @@
     "notificationForAll": "default",
     "glowFirstElement": true,
     "background_image": "",
-    "stretch_background_image":"default",
-    "default_alarm-sound": "",
+    "stretch_background_image":"fit",
+    "default_alarm_sound": "",
+    "default_button_press_sound": "./audio/button-press.mp3",
+    "playSoundOnClick": true,
     "registered_peroids":["w", "sb", "lb"],
     "max_peroids": 8,
     "peroids": [
         {
             "name": "Work",
             "label": "w",
-            "duration": 3,
-            "color": "#586A6A",
+            "duration": 1500,
+            "color": "#352225",
             "description": "Focus on tasks",
             "notificationWhenFinished": true,
             "overtime": false,
@@ -24,8 +26,8 @@
         {
             "name": "Short Break",
             "label": "sb",
-            "duration": 1,
-            "color": "#D29C9C",
+            "duration": 300,
+            "color": "#EADBF6",
             "description": "Stand up and strech",
             "notificationWhenFinished": true,
             "overtime": false,
@@ -34,8 +36,8 @@
         {
             "name": "Long Break",
             "label": "lb",
-            "duration": 2,
-            "color": "#DAD4EF",
+            "duration": 1200,
+            "color": "#FAFBF8",
             "description": "Take a nap or go for a walk!",
             "notificationWhenFinished": true,
             "overtime": false,
@@ -59,7 +61,7 @@
             "background-color": "#bbbbbb"
         }
     ],
-    "cycle": ["w", "2x", "lb", "sb"],
+    "cycle": ["w", "sb", "3x", "lb"],
     "cycle_presets": 
     [
         {
@@ -94,7 +96,6 @@
                 }   
             ]
         }
-
     ],
     "currentCycle": [],
     "amtOfCycles": 1

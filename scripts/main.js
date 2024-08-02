@@ -22,12 +22,14 @@ const settings_set_time_dur = document.getElementById('s_p_1')
 //const jsonData = require('./configs/default-config.json')
 
 var pdotscur;
+var buttonclickaudio;
+
 
 //Booleans
 var isCtrlUp = false;
 
 //Imports
-import { Peroid } from "./classes/Peroid.js";
+import { Peroid } from "../classes/Peroid.js";
 import {trans} from "./transitions.js";
 
 //Sets variables. Time represents seconds in this case
@@ -405,7 +407,7 @@ function setPeroids(){
 
 function runTimer(){
     thisInterval = setInterval(function() {
-        if (time < 1){
+        if (time <= 1){
             timerDone();
             return;
         }
@@ -464,8 +466,9 @@ function checkState(){
 //Loads JSON
 
 
-fetch(`./configs/default-config.json`).then(res => res.json()).then(data => {
+fetch(`../data/dev-configs/test-config.json`).then(res => res.json()).then(data => {
     c = data;
+    buttonclickaudio = new Audio(c.default_button_press_sound);
     uploadBackgroundIMG(c.background_image)
     askNotificationPermission()
     pomodots.removeChild(pomodots.children[0]);
@@ -482,6 +485,7 @@ fetch(`./configs/default-config.json`).then(res => res.json()).then(data => {
 
 //Handles when the button is pressed
 button.addEventListener("click", function(){
+    buttonclickaudio.play()
     checkState()
 })
 
@@ -496,6 +500,7 @@ document.addEventListener('keydown', (e) => {
         }
     }
     else if((e.code === "Enter" || e.code === "Space") && !e.repeat){
+        buttonclickaudio.play()
         checkState();
     }
 });
@@ -603,3 +608,4 @@ backgroundIMG.addEventListener('change', function(){
     c.background_image = this.value
     uploadBackgroundIMG(c.background_image)
 })
+
