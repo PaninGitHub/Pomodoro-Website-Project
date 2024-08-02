@@ -6,7 +6,7 @@
     "notificationForAll": "Default",
     "glowFirstElement": true,
     "background_image": "'https://scontent-hou1-1.cdninstagram.com/v/t51.29350-15/452592298_453431434268491_6777720324837368787_n.jpg?stp=dst-jpg_e35&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMTcweDIwODAuc2RyLmYyOTM1MCJ9&_nc_ht=scontent-hou1-1.cdninstagram.com&_nc_cat=107&_nc_ohc=dk2Qsb7rgP8Q7kNvgGNYCOq&edm=AJYBtmQBAAAA&ccb=7-5&ig_cache_key=MzQxODA4MDMwOTAyNTQ3MDYwNQ%3D%3D.2-ccb7-5&oh=00_AYAP0oPx86MQmzAP8CivC14MV3giCItsuhuig6KT1pMtDQ&oe=66A4FC45&_nc_sid=691684'",
-    "default_alarm-sound": "",
+    "default_alarm-sound": "../assets/audio/clock-alarm-8761.mp3",
     "registered_peroids":["w", "sb", "lb"],
     "peroids": [
         {

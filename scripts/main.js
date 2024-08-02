@@ -22,8 +22,6 @@ const settings_set_time_dur = document.getElementById('s_p_1')
 
 const displayed_settings = document.querySelectorAll('.s_dropdown, .s_input, .s_toggle__input, .s_p_dropdown')
 //const jsonData = require('./configs/default-config.json')
-
-var pdotscur;
 var buttonclickaudio;
 var tps_selected = ""
 
@@ -92,20 +90,12 @@ function removePeroid(l){
 }
 
 function startOfTimer(){
-    setPeroids()
+    if(this_peroids.length > 0){
+       this_peroids = []
+    }
+    setPeroids(c.pomodoro_mode)
     time = settime
     displayTime()
-}
-
-function importColorScheme(){
-    var style = document.createElement('style')
-    style.id = "styleid"
-    style.innerHTML = "ok"
-}
-
-function updatePeroids(){
-    //First, scan to see what elements are present.
-    //Afterwards, create a new object based on the statistics
 }
 
 function registerPeroids(){
@@ -130,11 +120,12 @@ function updateCycle(){
 }
 
 function updateDots(restart){
+    let max_peroids = c.max_peroids
     if(restart){
-        while(pomodots.length > 0){
+        while(pomodots.children.length > 0){
             pomodots.removeChild(pomodots.children[0])
         }
-        this_peroids.forEach ((dot) => {
+        this_peroids.forEach((dot) => {
             appendDot(dot)
         })
         if(pomodots.children.length > 0){
@@ -143,17 +134,29 @@ function updateDots(restart){
         return;
     }
     else{
+        //Makes sure that in Override mode another cycle iteration is added if the peroids created are less that what is requested to be showen
+        if(c.pomodoro_mode == "override"){
+            max_peroids = lengthOfCycle(c.cycle)
+            if(this_peroids.length < max_peroids){
+                appendCycle(c.cycle)
+            }
+        }
         //Checks whether any new dots were added
+        if(pomodots.children.length < this_peroids.length){
+            for(let i = pomodots.children.length; i < this_peroids.length; i++){
+                appendDot(this_peroids[i])
+            }
+        }
         //Shows any new dots
-        if(pomodots.children.length > c.max_peroids){
-            for(let i = 0; i < c.max_peroids; i++)
+        if(pomodots.children.length > max_peroids){
+            for(let i = 0; i < max_peroids; i++)
             {
                 if(pomodots.children[i].classList.contains('hide'))
                 {
                     pomodots.children[i].classList.remove('hide')
                 }
             }
-            for(let i = c.max_peroids; i < pomodots.children.length; i++){
+            for(let i = max_peroids; i < pomodots.children.length; i++){
                 if(!pomodots.children[i].classList.contains('hide'))
                 {
                     pomodots.children[i].classList.add('hide')
@@ -184,6 +187,7 @@ function updateDots(restart){
         console.error(error)
     }
 }   
+
 function displayTime(){
     min = ~~(time / 60);
     sec = time % 60;
@@ -325,6 +329,18 @@ function setTimeByInput(){
 
 function timerDone(skip){
     let tp = this_peroids[0] //tp -> This Peroid
+    if(c.pomodoro_mode == "timer"){
+        time = 0
+        let i = new Audio(c.default_alarm_sound)
+        i.play()
+        clearInterval(thisInterval);
+        new Notification(`Your timer is done!`)
+        button.innerHTML = "Restart"
+        peroidtitle.classList.add('hide')
+        state = "done"
+        displayTime()
+        return;
+    }
     if(!skip){
         tp.playSound();
         tp.pushNotification(c.notificationForAll)
@@ -344,10 +360,8 @@ function timerDone(skip){
         }
         peroidtitle.innerHTML = tp.name;
         displayTime()
-        pdotscur -= 1
         clearInterval(thisInterval);
         updateDots(false)
-        
     }
     else{
         time = settime;
@@ -395,31 +409,61 @@ function isMultiCycle(element){
     return(isMulti)
 }
 
-function setPeroids(){
-    let dot_limit = c.max_peroids
-    this_peroids = [];
-    //SEts time at the beginning
-    pdotscur = c.amtOfCycles;
-    for(let i = 0; i < c.amtOfCycles; i++)
+//Returns lenght of Cycle
+function lengthOfCycle(cycle){
+    let l = 0
+    let checkpoint = 0;
+    cycle.forEach(element => 
     {
-        let checkpoint = 0;
-        c.cycle.forEach(element => 
+        l += 1
+        //Checks for multipltive cycles ("3x", "10x", "6x", etc.)
+        if(isMultiCycle(element))
+        {
+            //Adds in amt. of peroids times it's multiplitive cycle
+            l += ((Number(element.substring(0, element.length - 1)) - 1) * (cycle.indexOf(element) - checkpoint)) - 1
+            checkpoint = c.cycle.indexOf(element) + 1;
+            return;
+        }
+    });
+    return(l)
+}
+
+function appendCycle(cycle){
+    let checkpoint = 0;
+    cycle.forEach(element => 
         {
             //Checks for multipltive cycles ("3x", "10x", "6x", etc.)
             if(isMultiCycle(element))
             {
                 for(let j = 0; j < Number(element.substring(0, element.length - 1) - 1); j++)
                 {
-                    for(let k = checkpoint; k < c.cycle.indexOf(element); k++)
+                    for(let k = checkpoint; k < cycle.indexOf(element); k++)
                     {
-                        addPeroid(c.cycle[k])
+                        addPeroid(cycle[k])
                     }
                 }
-                checkpoint = c.cycle.indexOf(element) + 1;
+                checkpoint = cycle.indexOf(element) + 1;
                 return;
             }
             addPeroid(element)
         });
+}
+
+function setPeroids(mode){
+    this_peroids = [];
+    let this_amtOfCycles = c.amtOfCycles
+    //Sets time at the beginning
+    if(mode == "timer"){
+        updateDots(true)
+        return
+    }
+    if (mode == "override"){
+        this_amtOfCycles = 1;
+    }
+    //Pending Cycle
+    for(let i = 0; i < this_amtOfCycles; i++)
+    {
+        appendCycle(c.cycle)
     }
     let tp = this_peroids[0] //tp -> This Peroid
     if(tp.duration != undefined){
@@ -619,14 +663,14 @@ for(let sel of document.getElementsByClassName("Tin")){
 
 displayed_settings.forEach((ele) => {
     ele.addEventListener('change', function(){
-        switch(ele.id){
+        switch(ele.id)
+        {
             //General Settings
             case 's_time_est_toggle':
                 c.showTimeEstimated = this.checked;
                 updateTimeEstimate();
                 break;
             case 's_time_est_format':
-                console.log(this.value)
                 c.est_time_format = this.value;
                 updateTimeEstimate();
                 break;
@@ -648,6 +692,10 @@ displayed_settings.forEach((ele) => {
             case 's_max_dots_shown':
                 c.max_peroids = this.value
                 updateDots(false)
+                break; 
+            case 's_timer_mode':
+                c.pomodoro_mode = this.value
+                startOfTimer()
             //Individual Peroids 
             case 's_p_dropdown':
                 try{

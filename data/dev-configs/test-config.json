@@ -1,5 +1,5 @@
 {
-    "pomodoro_mode": "classic",
+    "pomodoro_mode": "timer",
     "whenTimerFinished": "default",
     "est_time_format": "12-hr",
     "showTimeEstimated": true,
@@ -7,7 +7,7 @@
     "glowFirstElement": true,
     "background_image": "https://images.pexels.com/photos/3910141/pexels-photo-3910141.jpeg?cs=srgb&dl=pexels-brett-sayles-3910141.jpg&fm=jpg",
     "stretch_background_image":"fit",
-    "default_alarm_sound": "",
+    "default_alarm_sound": "../assets/audio/clock-alarm-8761.mp3",
     "default_button_press_sound": "./assets/audio/button-press.mp3",
     "playSoundOnClick": true,
     "registered_peroids":["w", "sb", "lb"],
@@ -62,7 +62,7 @@
         }
     ],
     "selected_cycle_preset": "Custom",
-    "cycle": ["w", "sb", "3x", "lb"],
+    "cycle": ["w", "sb", "w"],
     "cycle_presets": 
     [
         {
@@ -109,5 +109,5 @@
         }
     ],
     "currentCycle": [],
-    "amtOfCycles": 1
+    "amtOfCycles": 2
 }
