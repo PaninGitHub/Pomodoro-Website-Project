@@ -179,10 +179,10 @@ function displayTime(){
 function initalizeSettings(){
     displayed_settings.forEach((ele) => {
         switch(ele.id){
-            case 's_toggle_1':
+            case 's_time_est_toggle':
                 ele.checked = c.glowFirstElement
                 break;
-            case 's_dropdown_2':
+            case 's_glow_first_toggle':
                 ele.checked = c.showTimeEstimated
                 break;
         }
@@ -583,34 +583,37 @@ displayed_settings.forEach((ele) => {
     console.log(ele.id)
     ele.addEventListener('change', function(){
         switch(ele.id){
-            case 's_toggle_1':
+            //General Settings
+            case 's_time_est_toggle':
                 c.showTimeEstimated = this.checked;
                 updateTimeEstimate();
                 break;
-            case 's_dropdown_2':
+            case 's_time_est_format':
+                console.log(this.value)
                 c.est_time_format = this.value;
                 updateTimeEstimate();
                 break;
+            case 's_glow_first_toggle':
+                c.glowFirstElement = this.checked;
+                updateDots(false)
+                break;
+            case 's_notif_all':
+                c.notificationForAll = this.value
+                break;
+            case 's_strch_bkground':
+                c.stretch_background_image = this.value
+                stretchBackgroundImage(c.stretch_background_image)
+                break;
+            case 's_url_bkground_img':
+                c.background_image = this.value
+                uploadBackgroundIMG(c.background_image)   
+                break; 
+            //Individual Peroids 
             case 's_p_dropdown':
                 document.getElementById("spdot").style.backgroundColor = getPeroidByLabel(this.value).color;
                 tps_selected = getPeroidByLabel(this.value);
                 settings_set_time_dur.value = tps_selected.duration;
-                break;
-            case 's_toggle_3':
-                c.glowFirstElement = this.checked;
-                updateDots(false)
-                break;
-            case 's_dropdown_4':
-                c.notificationForAll = this.value
-                break;
-            case 's_dropdown_5':
-                c.stretch_background_image = this.value
-                stretchBackgroundImage(c.stretch_background_image)
-                break;
-            case 's_input_6':
-                c.background_image = this.value
-                uploadBackgroundIMG(c.background_image)   
-                break;   
+                break; 
         }
     })
 })
