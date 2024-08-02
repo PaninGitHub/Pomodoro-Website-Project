@@ -30,6 +30,7 @@ var tps_selected = ""
 
 //Booleans
 var isCtrlUp = false;
+var isShiftUp = false;
 
 //Imports
 import { Peroid } from "../classes/Peroid.js";
@@ -129,7 +130,6 @@ function updateCycle(){
 }
 
 function updateDots(restart){
-    try{
     if(restart){
         while(pomodots.length > 0){
             pomodots.removeChild(pomodots.children[0])
@@ -146,14 +146,30 @@ function updateDots(restart){
         //Checks whether any new dots were added
         //Shows any new dots
         if(pomodots.children.length > c.max_peroids){
-        for(let i = 0; i < c.max_peroids; i++)
-        {
-            if(pomodots.children[i].classList.contains('hide'))
+            for(let i = 0; i < c.max_peroids; i++)
             {
-                pomodots.children[i].classList.remove('hide')
+                if(pomodots.children[i].classList.contains('hide'))
+                {
+                    pomodots.children[i].classList.remove('hide')
+                }
             }
-        }}
-    }} catch (error){ console.error(error)}
+            for(let i = c.max_peroids; i < pomodots.children.length; i++){
+                if(!pomodots.children[i].classList.contains('hide'))
+                {
+                    pomodots.children[i].classList.add('hide')
+                }
+            }
+        }   
+        else {
+            for(let i = 0; i < pomodots.children.length; i++)
+                {
+                    if(pomodots.children[i].classList.contains('hide'))
+                    {
+                        pomodots.children[i].classList.remove('hide')
+                    }
+                }
+        }
+    }
     //Just in case there is no pomodots
     try{
         const thisChild = pomodots.children[0]
@@ -307,10 +323,12 @@ function setTimeByInput(){
     console.log("Set time to " + time);
 }
 
-function timerDone(){
+function timerDone(skip){
     let tp = this_peroids[0] //tp -> This Peroid
-    tp.playSound();
-    tp.pushNotification(c.notificationForAll)
+    if(!skip){
+        tp.playSound();
+        tp.pushNotification(c.notificationForAll)
+    }
     removePeroid(0)
     tp = this_peroids[0]
     statustext.style.opacity = '1';
@@ -419,7 +437,7 @@ function setPeroids(){
 function runTimer(){
     thisInterval = setInterval(function() {
         if (time <= 1){
-            timerDone();
+            timerDone(false);
             return;
         }
             time -= 1;
@@ -437,6 +455,10 @@ function checkState(){
         time = settime;
         displayTime();
         trans.static("Start", button);
+    }
+    else if (button.innerHTML == 'Skip')
+    {
+        timerDone(true)
     }
     else if (state == 'start' || state == 'paused')
     {
@@ -510,6 +532,14 @@ document.addEventListener('keydown', (e) => {
             trans.static('Stop', button);
         }
     }
+    if(e.code === "ShiftLeft")
+        {
+            isShiftUp = true;
+            if(!e.repeat && button.dataset.intrans === "none" && (state == 'running' || state == 'paused'))
+            {
+                trans.static('Skip', button);
+            }
+        }
     else if((e.code === "Enter" || e.code === "Space") && !e.repeat){
         buttonclickaudio.play()
         checkState();
@@ -521,16 +551,24 @@ document.addEventListener('keyup', (e) => {
     if(e.code === "ControlLeft")
     {
         isCtrlUp = false;
-        if(button.dataset.intrans === "none" && (state == 'running' || state == 'paused')){
-          if(state == 'running')
-          {
-            trans.static("Pause", button);
-          } 
-          if(state == 'paused')
-          {
-            trans.static("Unpause", button);
-          } 
-        }
+    }
+    else if(e.code === "ShiftLeft")
+    {
+        isShiftUp = false;
+    }
+    else
+    {
+        return;
+    }
+    if(button.dataset.intrans === "none" && (state == 'running' || state == 'paused')){
+        if(state == 'running')
+        {
+          trans.static("Pause", button);
+        } 
+        if(state == 'paused')
+        {
+          trans.static("Unpause", button);
+        } 
     }
 })
 
@@ -580,7 +618,6 @@ for(let sel of document.getElementsByClassName("Tin")){
 
 
 displayed_settings.forEach((ele) => {
-    console.log(ele.id)
     ele.addEventListener('change', function(){
         switch(ele.id){
             //General Settings
@@ -608,11 +645,18 @@ displayed_settings.forEach((ele) => {
                 c.background_image = this.value
                 uploadBackgroundIMG(c.background_image)   
                 break; 
+            case 's_max_dots_shown':
+                c.max_peroids = this.value
+                updateDots(false)
             //Individual Peroids 
             case 's_p_dropdown':
+                try{
                 document.getElementById("spdot").style.backgroundColor = getPeroidByLabel(this.value).color;
                 tps_selected = getPeroidByLabel(this.value);
                 settings_set_time_dur.value = tps_selected.duration;
+                } catch(error){
+                    console.log(`${error} => Caused when element ${ele.id} was changed`)
+                }
                 break; 
         }
     })

@@ -1,7 +1,7 @@
 //Scrapped till later. No use of them now.
 
 export class Peroid {
-    constructor(name, label, duration, color, description = "", sound = "../audio/clock-alarm-8761.mp3", notificationWhenFinished = "true"){
+    constructor(name, label, duration, color, description = "", sound = "../assets/audio/clock-alarm-8761.mp3", notificationWhenFinished = "true"){
         this.name = name;
         this.label = label; //Used for abberiviations should I don't gotta type out "sHoRt bReAk" every time.
         this.duration = duration;
