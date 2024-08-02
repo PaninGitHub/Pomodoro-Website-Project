@@ -19,10 +19,13 @@ const settings_icon_background = document.getElementById('settings_icon_backgrou
 const settings_icon = document.getElementById('settings_icon')
 const settings_aside = document.getElementById('settings_aside')
 const settings_set_time_dur = document.getElementById('s_p_1')
+
+const displayed_settings = document.querySelectorAll('.s_dropdown, .s_input, .s_toggle__input, .s_p_dropdown')
 //const jsonData = require('./configs/default-config.json')
 
 var pdotscur;
 var buttonclickaudio;
+var tps_selected = ""
 
 
 //Booleans
@@ -174,8 +177,16 @@ function displayTime(){
 }
 
 function initalizeSettings(){
-    glowFirstElement.checked = c.glowFirstElement
-    showTimeEstimated.checked = c.showTimeEstimated
+    displayed_settings.forEach((ele) => {
+        switch(ele.id){
+            case 's_toggle_1':
+                ele.checked = c.glowFirstElement
+                break;
+            case 's_dropdown_2':
+                ele.checked = c.showTimeEstimated
+                break;
+        }
+    })    
     stretchBackgroundImage(c.stretch_background_image)
     registered_peroids.forEach((element) => {
         let peroid = getPeroidByLabel(element)
@@ -566,46 +577,41 @@ for(let sel of document.getElementsByClassName("Tin")){
 
 ////Event Handler for Elements
 //Settings
-const showTimeEstimated  = document.getElementById("s_toggle_1")
-showTimeEstimated.addEventListener('change', function(){
-    c.showTimeEstimated = this.checked;
-    updateTimeEstimate()
-})
 
-const est_time_format = document.getElementById("s_dropdown_2")
-est_time_format.addEventListener('change', function(){
-    c.est_time_format = this.value;
-    updateTimeEstimate()
-})
 
-const s_p_dropdown = document.getElementById("s_p_dropdown") 
-var tps_selected = ""
-s_p_dropdown.addEventListener('change', function(){
-    document.getElementById("spdot").style.backgroundColor = getPeroidByLabel(this.value).color;
-    tps_selected = getPeroidByLabel(this.value)
-    settings_set_time_dur.value = tps_selected.duration
-})
-
-const glowFirstElement = document.getElementById("s_toggle_3")
-glowFirstElement.addEventListener('change', function(){
-    c.glowFirstElement = this.checked;
-    updateDots(false)
-})
-
-const globalNotificationPush = document.getElementById("s_dropdown_4")
-globalNotificationPush.addEventListener('change', function(){
-    c.notificationForAll = this.value
-})
-
-const alterBackgroundImage  = document.getElementById("s_dropdown_5")
-alterBackgroundImage.addEventListener('change', function(){
-    c.stretch_background_image = this.value
-    stretchBackgroundImage(c.stretch_background_image)
-})
-
-const backgroundIMG = document.getElementById("s_input_6")
-backgroundIMG.addEventListener('change', function(){
-    c.background_image = this.value
-    uploadBackgroundIMG(c.background_image)
+displayed_settings.forEach((ele) => {
+    console.log(ele.id)
+    ele.addEventListener('change', function(){
+        switch(ele.id){
+            case 's_toggle_1':
+                c.showTimeEstimated = this.checked;
+                updateTimeEstimate();
+                break;
+            case 's_dropdown_2':
+                c.est_time_format = this.value;
+                updateTimeEstimate();
+                break;
+            case 's_p_dropdown':
+                document.getElementById("spdot").style.backgroundColor = getPeroidByLabel(this.value).color;
+                tps_selected = getPeroidByLabel(this.value);
+                settings_set_time_dur.value = tps_selected.duration;
+                break;
+            case 's_toggle_3':
+                c.glowFirstElement = this.checked;
+                updateDots(false)
+                break;
+            case 's_dropdown_4':
+                c.notificationForAll = this.value
+                break;
+            case 's_dropdown_5':
+                c.stretch_background_image = this.value
+                stretchBackgroundImage(c.stretch_background_image)
+                break;
+            case 's_input_6':
+                c.background_image = this.value
+                uploadBackgroundIMG(c.background_image)   
+                break;   
+        }
+    })
 })
 
