@@ -1,6 +1,6 @@
 //Scrapped till later. No use of them now.
 
-export class Peroid {
+export class Period {
     constructor(name, label, duration, color, description = "", sound = "../assets/audio/clock-alarm-8761.mp3", notificationWhenFinished = "true"){
         this.name = name;
         this.label = label; //Used for abberiviations should I don't gotta type out "sHoRt bReAk" every time.
@@ -38,7 +38,7 @@ export class Peroid {
             }
             else
             {
-                console.log(`Peroid ${this.dot_id} could not push notfication due to blockage`)
+                console.log(`period ${this.dot_id} could not push notfication due to blockage`)
             }
         }
     }

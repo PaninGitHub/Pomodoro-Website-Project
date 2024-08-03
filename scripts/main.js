@@ -13,8 +13,8 @@ const clockinput = document.getElementById("time-input");
 const estdisplay = document.getElementById("time-est-div");
 const pomodots = document.getElementById("pomodots");
 const pdot = pomodots.children[0]
-const tps_display = document.getElementById("s_p_option") //Stands for time peroid settings
-const peroidtitle = document.getElementById('peroidtitle')
+const tps_display = document.getElementById("s_p_option") //Stands for time period settings
+const periodtitle = document.getElementById('periodtitle')
 const settings_icon_background = document.getElementById('settings_icon_background')
 const settings_icon = document.getElementById('settings_icon')
 const settings_aside = document.getElementById('settings_aside')
@@ -31,7 +31,7 @@ var isCtrlUp = false;
 var isShiftUp = false;
 
 //Imports
-import { Peroid } from "../classes/Peroid.js";
+import { Period } from "../classes/Period.js";
 import {trans} from "./transitions.js";
 
 //Sets variables. Time represents seconds in this case
@@ -41,8 +41,8 @@ var settime = 0;
 var time = settime;
 var state = "start";
 var thisInterval;
-var this_peroids = [];
-var registered_peroids = [];
+var this_periods = [];
+var registered_periods = [];
 var c = '';
 
 
@@ -59,34 +59,34 @@ function askNotificationPermission() {
       });
 }   
 
-function addPeroid(l){
-    let peroid = ""
-    for(let i = 0; i < c.peroids.length; i++){
-        if(c.peroids[i].label == l){
-            peroid = c.peroids[i]
+function addPeriod(l){
+    let period = ""
+    for(let i = 0; i < c.periods.length; i++){
+        if(c.periods[i].label == l){
+            period = c.periods[i]
             break;
         }
     }
-    this_peroids.push(
-        new Peroid(
-            peroid.name,
-            peroid.label,
-            peroid.duration,
-            peroid.color,
-            peroid.description,
-            peroid.sound,
-            peroid.notificationWhenFinished
+    this_periods.push(
+        new Period(
+            period.name,
+            period.label,
+            period.duration,
+            period.color,
+            period.description,
+            period.sound,
+            period.notificationWhenFinished
         )
     )
 }
 
-function removePeroid(l){
+function removePeriod(l){
     pomodots.removeChild(pomodots.children[l]);
-    this_peroids;
+    this_periods;
     if(pomodots.children.length > 0 && !pomodots.children[0].classList.contains('shadow')){
         pomodots.children[0].classList.add('shadow');
     }
-    this_peroids.splice(0, 1);
+    this_periods.splice(0, 1);
 }
 
 function startOfTimer(){
@@ -96,42 +96,42 @@ function startOfTimer(){
         displayTime()
         return;
     }
-    else if(this_peroids.length > 0){
-       this_peroids = []
+    else if(this_periods.length > 0){
+       this_periods = []
     }
-    setPeroids(c.pomodoro_mode)
+    setPeriods(c.pomodoro_mode)
     time = settime
     displayTime()
 }
 
-function registerPeroids(){
-    registered_peroids = [];
-    this_peroids.forEach((peroid) => {
-        if(!registered_peroids.includes(peroid.label)){
-            registered_peroids.push(peroid.label)
+function registerPeriods(){
+    registered_periods = [];
+    this_periods.forEach((period) => {
+        if(!registered_periods.includes(period.label)){
+            registered_periods.push(period.label)
         }
     })
 }
 
 function updateCycle(){
-    this_peroids = [];
+    this_periods = [];
     for(let i = 0; i < c.amtOfCycles; i++){
         for(let j = 0; j < c.cycle.length; j++){
             if(isMultiCycle(c.cycle[j])){
                 
             }
-            this_peroids.push(c.cycle[j])
+            this_periods.push(c.cycle[j])
         }
     }
 }
 
 function updateDots(restart){
-    let max_peroids = c.max_peroids
+    let max_periods = c.max_periods
     if(restart){
         while(pomodots.children.length > 0){
             pomodots.removeChild(pomodots.children[0])
         }
-        this_peroids.forEach((dot) => {
+        this_periods.forEach((dot) => {
             appendDot(dot)
         })
         if(pomodots.children.length > 0){
@@ -140,29 +140,29 @@ function updateDots(restart){
         return;
     }
     else{
-        //Makes sure that in Override mode another cycle iteration is added if the peroids created are less that what is requested to be showen
+        //Makes sure that in Override mode another cycle iteration is added if the periods created are less that what is requested to be showen
         if(c.pomodoro_mode == "override"){
-            max_peroids = lengthOfCycle(c.cycle)
-            if(this_peroids.length < max_peroids){
+            max_periods = lengthOfCycle(c.cycle)
+            if(this_periods.length < max_periods){
                 appendCycle(c.cycle)
             }
         }
         //Checks whether any new dots were added
-        if(pomodots.children.length < this_peroids.length){
-            for(let i = pomodots.children.length; i < this_peroids.length; i++){
-                appendDot(this_peroids[i])
+        if(pomodots.children.length < this_periods.length){
+            for(let i = pomodots.children.length; i < this_periods.length; i++){
+                appendDot(this_periods[i])
             }
         }
         //Shows any new dots
-        if(pomodots.children.length > max_peroids){
-            for(let i = 0; i < max_peroids; i++)
+        if(pomodots.children.length > max_periods){
+            for(let i = 0; i < max_periods; i++)
             {
                 if(pomodots.children[i].classList.contains('hide'))
                 {
                     pomodots.children[i].classList.remove('hide')
                 }
             }
-            for(let i = max_peroids; i < pomodots.children.length; i++){
+            for(let i = max_periods; i < pomodots.children.length; i++){
                 if(!pomodots.children[i].classList.contains('hide'))
                 {
                     pomodots.children[i].classList.add('hide')
@@ -214,19 +214,19 @@ function initalizeSettings(){
         }
     })    
     stretchBackgroundImage(c.stretch_background_image)
-    registered_peroids.forEach((element) => {
-        let peroid = getPeroidByLabel(element)
+    registered_periods.forEach((element) => {
+        let period = getPeriodByLabel(element)
         let tpsClone = tps_display.cloneNode(true);
         tpsClone.value = element
-        tpsClone.innerHTML = peroid.name
+        tpsClone.innerHTML = period.name
         s_p_dropdown.appendChild(tpsClone); 
     }) 
 }
 
-function getPeroidByLabel(value){
-    for(let i = 0; i < c.peroids.length; i++){
-        if(c.peroids[i].label == value){
-            return(c.peroids[i])
+function getPeriodByLabel(value){
+    for(let i = 0; i < c.periods.length; i++){
+        if(c.periods[i].label == value){
+            return(c.periods[i])
             break;
         }
     }
@@ -250,8 +250,8 @@ function updateTimeEstimate(){
     let min = now.getMinutes();
     let sec = now.getSeconds();
     let timeest = hr * 3600 + min * 60 + sec + time;
-    for(let i = 1; i < this_peroids.length; i++){
-        timeest += this_peroids[i].duration
+    for(let i = 1; i < this_periods.length; i++){
+        timeest += this_periods[i].duration
     }
     if(c.est_time_format == "24-hr"){
         estHr.innerHTML = ~~(timeest / 3600).toString().padStart(2, '0');
@@ -334,7 +334,7 @@ function setTimeByInput(){
 }
 
 function timerDone(skip){
-    let tp = this_peroids[0] //tp -> This Peroid
+    let tp = this_periods[0] //tp -> This Period
     if(c.pomodoro_mode == "timer"){
         time = 0
         let i = new Audio(c.default_alarm_sound)
@@ -342,7 +342,7 @@ function timerDone(skip){
         clearInterval(thisInterval);
         new Notification(`Your timer is done!`)
         button.innerHTML = "Restart"
-        peroidtitle.classList.add('hide')
+        periodtitle.classList.add('hide')
         state = "done"
         displayTime()
         return;
@@ -351,20 +351,20 @@ function timerDone(skip){
         tp.playSound();
         tp.pushNotification(c.notificationForAll)
     }
-    removePeroid(0)
-    tp = this_peroids[0]
+    removePeriod(0)
+    tp = this_periods[0]
     statustext.style.opacity = '1';
     state = "start"
     button.innerHTML = "Start";
     if(pomodots.children.length != 0){
-        //Note: Need to possibly add error handlier if it calls the wrong peroid or smth.
+        //Note: Need to possibly add error handlier if it calls the wrong period or smth.
         if(tp.duration != undefined){
             settime = tp.duration
             time = settime
         } else {
-            console.log(`Error: Duration is invalid for this peroid ${this_peroids[0].name}`)
+            console.log(`Error: Duration is invalid for this period ${this_periods[0].name}`)
         }
-        peroidtitle.innerHTML = tp.name;
+        periodtitle.innerHTML = tp.name;
         displayTime()
         clearInterval(thisInterval);
         updateDots(false)
@@ -374,9 +374,9 @@ function timerDone(skip){
         displayTime()
         clearInterval(thisInterval);
     }
-    if(this_peroids.length <= 0){
+    if(this_periods.length <= 0){
         button.innerHTML = "Restart"
-        peroidtitle.classList.add('hide')
+        periodtitle.classList.add('hide')
         state = "done"
     }
 }
@@ -384,14 +384,14 @@ function timerDone(skip){
 function appendDot(dot){
     //The dots only clone is a clone is made in the for loop;
     //If you put the below line outside the for loop, it won't work  
-    if(registered_peroids.includes(dot.label)){
+    if(registered_periods.includes(dot.label)){
         let pdotClone = pdot.cloneNode(true);
         pdotClone.classList.add(dot.label)
         pdotClone.id = `pdot${pomodots.children.length + 1}`
         dot.dot_id = `pdot${pomodots.children.length + 1}`
         pdotClone.style.setProperty('--bg-color', `${dot.color}`)
         pdotClone.style.setProperty('--bg-color-shadow', `${dot.color}8f`)
-        if(pomodots.children.length + 1> c.max_peroids){
+        if(pomodots.children.length + 1> c.max_periods){
             pdotClone.classList.add('hide')
         }
         pomodots.appendChild(pdotClone);  
@@ -425,7 +425,7 @@ function lengthOfCycle(cycle){
         //Checks for multipltive cycles ("3x", "10x", "6x", etc.)
         if(isMultiCycle(element))
         {
-            //Adds in amt. of peroids times it's multiplitive cycle
+            //Adds in amt. of periods times it's multiplitive cycle
             l += ((Number(element.substring(0, element.length - 1)) - 1) * (cycle.indexOf(element) - checkpoint)) - 1
             checkpoint = c.cycle.indexOf(element) + 1;
             return;
@@ -445,18 +445,18 @@ function appendCycle(cycle){
                 {
                     for(let k = checkpoint; k < cycle.indexOf(element); k++)
                     {
-                        addPeroid(cycle[k])
+                        addPeriod(cycle[k])
                     }
                 }
                 checkpoint = cycle.indexOf(element) + 1;
                 return;
             }
-            addPeroid(element)
+            addPeriod(element)
         });
 }
 
-function setPeroids(mode){
-    this_peroids = [];
+function setPeriods(mode){
+    this_periods = [];
     let this_amtOfCycles = c.amtOfCycles
     //Sets time at the beginning
     if(mode == "timer"){
@@ -471,16 +471,16 @@ function setPeroids(mode){
     {
         appendCycle(c.cycle)
     }
-    let tp = this_peroids[0] //tp -> This Peroid
+    let tp = this_periods[0] //tp -> This Period
     if(tp.duration != undefined){
         settime = tp.duration
     }
-    if(this_peroids.length >= 1)
+    if(this_periods.length >= 1)
     {
-        peroidtitle.classList.add('show')
-        peroidtitle.innerHTML = tp.name
+        periodtitle.classList.add('show')
+        periodtitle.innerHTML = tp.name
     }
-    registerPeroids()
+    registerPeriods()
     updateDots(true)
 }
 
@@ -569,7 +569,7 @@ fetch(`../data/dev-configs/test-config.json`).then(res => res.json()).then(data 
     pomodots.removeChild(pomodots.children[0]);
     startOfTimer();
     button.dataset.state = 'start';
-    console.log(`Loaded in ${this_peroids.length} peroids`)
+    console.log(`Loaded in ${this_periods.length} periods`)
     setInterval(updateTimeEstimate, 1000)
     initalizeSettings()
 }).catch(error => {
@@ -711,17 +711,17 @@ displayed_settings.forEach((ele) => {
                 uploadBackgroundIMG(c.background_image)   
                 break; 
             case 's_max_dots_shown':
-                c.max_peroids = this.value
+                c.max_periods = this.value
                 updateDots(false)
                 break; 
             case 's_timer_mode':
                 c.pomodoro_mode = this.value
                 startOfTimer()
-            //Individual Peroids 
+            //Individual Periods 
             case 's_p_dropdown':
                 try{
-                document.getElementById("spdot").style.backgroundColor = getPeroidByLabel(this.value).color;
-                tps_selected = getPeroidByLabel(this.value);
+                document.getElementById("spdot").style.backgroundColor = getPeriodByLabel(this.value).color;
+                tps_selected = getPeriodByLabel(this.value);
                 settings_set_time_dur.value = tps_selected.duration;
                 } catch(error){
                     console.log(`${error} => Caused when element ${ele.id} was changed`)
