@@ -90,7 +90,13 @@ function removePeroid(l){
 }
 
 function startOfTimer(){
-    if(this_peroids.length > 0){
+    clearInterval(thisInterval)
+    if(c.pomodoro_mode == "stopwatch"){
+        time = 0
+        displayTime()
+        return;
+    }
+    else if(this_peroids.length > 0){
        this_peroids = []
     }
     setPeroids(c.pomodoro_mode)
@@ -489,6 +495,13 @@ function runTimer(){
     }, 1000)
 }
 
+function runStopwatch(){
+    thisInterval = setInterval(function() {
+            time += 1;
+            displayTime();
+    }, 1000)
+}
+
 //Made this a seperate function so that I don't have to copy and paste code 
 //Transitions between states
 function checkState(){
@@ -508,7 +521,12 @@ function checkState(){
     {
         state = 'running';
         trans.static("Pause", button);
-        runTimer();
+        if(c.pomodoro_mode == "stopwatch"){
+            runStopwatch();
+        }
+        else{
+            runTimer();
+        }
     }
     else if (state == 'running')
     {
@@ -576,17 +594,20 @@ document.addEventListener('keydown', (e) => {
             trans.static('Stop', button);
         }
     }
-    if(e.code === "ShiftLeft")
+    if(e.code === "ShiftLeft"){
+        if(!(pomodoro_mode == "timer" || pomodoro_mode == "stopwatch"))
         {
-            isShiftUp = true;
-            if(!e.repeat && button.dataset.intrans === "none" && (state == 'running' || state == 'paused'))
-            {
-                trans.static('Skip', button);
-            }
+                isShiftUp = true;
+                if(!e.repeat && button.dataset.intrans === "none" && (state == 'running' || state == 'paused'))
+                {
+                    trans.static('Skip', button);
+                }
+                else if((e.code === "Enter" || e.code === "Space") && !e.repeat)
+                {
+                        buttonclickaudio.play()
+                        checkState();
+                }
         }
-    else if((e.code === "Enter" || e.code === "Space") && !e.repeat){
-        buttonclickaudio.play()
-        checkState();
     }
 });
 
