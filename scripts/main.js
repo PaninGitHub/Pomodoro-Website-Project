@@ -29,6 +29,7 @@ var tps_selected = ""
 //Booleans
 var isCtrlUp = false;
 var isShiftUp = false;
+var isEnterUp = false;
 
 //Imports
 import { Period } from "../classes/Period.js";
@@ -90,17 +91,38 @@ function removePeriod(l){
 }
 
 function startOfTimer(){
-    clearInterval(thisInterval)
-    if(c.pomodoro_mode == "stopwatch"){
-        time = 0
-        displayTime()
-        return;
+    //Handles cases where the mode uses the pomodoro feature but the cycle is empty
+    if(c.pomodoro_mode == "classic" || c.pomodoro_mode == "overflow"){
+        try{
+            if(c.cycle == undefined){
+                throw new Error("Setting 'cycle' is undefined when attempting to start the timer. Defaulting to timer mode")
+            }
+            else if(c.cycle.length === 0){
+                throw new Error("Setting 'cycle' is empty when attempting to start the timer. Defaulting to timer mode")
+            }
+        } catch (error) {
+            console.error(error)
+            c.pomodoro_mode = "timer"
+            time = 0;
+        }
     }
-    else if(this_periods.length > 0){
+    //Makes sure that the input screen is still not shown is user was on it when switched
+    if(state == "input"){
+        clockdisplay.classList.replace("time-display-hide", "time-display-show")
+        clockinput.classList.replace("time-input-show", "time-input-hide")
+    }
+    clearInterval(thisInterval)
+    if(this_periods.length > 0){
        this_periods = []
     }
+    state = 'start'
+    button.dataset.state = 'start'
+    trans.static("Start", button);
     setPeriods(c.pomodoro_mode)
     time = settime
+    if(c.pomodoro_mode == "stopwatch"){
+        time = 0
+    }
     displayTime()
 }
 
@@ -140,8 +162,8 @@ function updateDots(restart){
         return;
     }
     else{
-        //Makes sure that in Override mode another cycle iteration is added if the periods created are less that what is requested to be showen
-        if(c.pomodoro_mode == "override"){
+        //Makes sure that in Overflow mode another cycle iteration is added if the periods created are less that what is requested to be showen
+        if(c.pomodoro_mode == "overflow"){
             max_periods = lengthOfCycle(c.cycle)
             if(this_periods.length < max_periods){
                 appendCycle(c.cycle)
@@ -459,11 +481,11 @@ function setPeriods(mode){
     this_periods = [];
     let this_amtOfCycles = c.amtOfCycles
     //Sets time at the beginning
-    if(mode == "timer"){
+    if(mode == "timer" || mode == "stopwatch"){
         updateDots(true)
         return
     }
-    if (mode == "override"){
+    else if (mode == "overflow"){
         this_amtOfCycles = 1;
     }
     //Pending Cycle
@@ -544,8 +566,6 @@ function checkState(){
     }
     else if (state == 'done')
     {
-        state = 'start'
-        clearInterval(thisInterval);
         startOfTimer()
         button.dataset.state = 'start'
         trans.static("Start", button);
@@ -594,19 +614,24 @@ document.addEventListener('keydown', (e) => {
             trans.static('Stop', button);
         }
     }
-    if(e.code === "ShiftLeft"){
-        if(!(pomodoro_mode == "timer" || pomodoro_mode == "stopwatch"))
+    else if(e.code === "ShiftLeft"){
+        if(!(c.pomodoro_mode == "timer" || c.pomodoro_mode == "stopwatch"))
         {
                 isShiftUp = true;
                 if(!e.repeat && button.dataset.intrans === "none" && (state == 'running' || state == 'paused'))
                 {
                     trans.static('Skip', button);
                 }
-                else if((e.code === "Enter" || e.code === "Space") && !e.repeat)
+                else if((e.code === "Space") && !e.repeat)
                 {
                         buttonclickaudio.play()
                         checkState();
                 }
+        }
+    }
+    else if(e.code === "Enter"){
+        if(state == "input"){
+            checkState()
         }
     }
 });

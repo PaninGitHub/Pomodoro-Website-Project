@@ -216,6 +216,11 @@ body {
     cursor: pointer;
     margin-left: 10px;
 }
+.s_warning_text{    
+    align-self: flex-end;
+    font-size: .75em;
+    color: #fa8a82;
+}
 .s_toggle__input{
     display: none;
 }
