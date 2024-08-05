@@ -159,29 +159,34 @@ function setCyclePreset(pre){
     c.selected_cycle_preset = pre
     if(pre === 'no_preset'){
         this_cycle = c.cycle
+        periods = JSON.parse(JSON.stringify(c.periods))
     }
     else{
         c.cycle_presets.forEach((p) => {
             if(p.name == pre){
                 this_cycle = p.cycle
                 //Fills in preset infomation to the period list on the website
-                periods.forEach((pp) => {
-                    if(pp.label == p.label){
-                        for(let prop in p){
-                            if(p.hasOwnProperty(prop) && pp.hasOwnProperty(prop)){
-                                pp[prop] = p[prop]
-                            }
-                        }
-                    }
-                
-                })
+                matchPeriodProperties(periods, p.periods) 
                 startOfTimer()
-                return;
             }
         })
     }
     startOfTimer()
     return;
+}
+
+function matchPeriodProperties(toReplace, newlist){
+    toReplace.forEach(o => {
+        newlist.forEach(n => {
+            if(o.label == n.label){
+                for(let prop in o){
+                    if(o.hasOwnProperty(prop) && n.hasOwnProperty(prop)){
+                        o[prop] = n[prop]
+                    }
+                }
+            }
+        })
+    });
 }
 
 function updateCycle(){
@@ -658,8 +663,9 @@ function checkState(){
 
 fetch(`../data/dev-configs/test-config.json`).then(res => res.json()).then(data => {
     c = data;
-    periods = c.periods
-    this_cycle = c.cycle
+    periods = JSON.parse(JSON.stringify(c.periods))
+    this_cycle = JSON.parse(JSON.stringify(c.cycle))
+    console.log(c.cycle_presets)
     buttonclickaudio = new Audio(c.default_button_press_sound);
     uploadBackgroundIMG(c.background_image)
     askNotificationPermission()
@@ -835,3 +841,10 @@ displayed_settings.forEach((ele) => {
     })
 })
 
+document.getElementById("help_icon").addEventListener('mouseover', function(){
+
+})
+
+document.getElementById("help_icon").addEventListener('mouseleave', function(){
+    
+})

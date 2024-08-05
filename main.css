@@ -12,6 +12,19 @@ body {
     display: flex;
     opacity:1;
 }
+p{
+    margin: 4px;
+    font-size: 1em;
+}
+.helptext{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    flex-wrap: nowrap;
+    margin: 0px;
+    top: 10px;
+}
 .timer {
     text-align: center;
 }
@@ -288,6 +301,16 @@ body {
 #settings_icon:hover{
     transition: .25s;
     rotate: 35deg;
+}
+#help_icon{
+    background-color: #ffffff4f;
+    color: #ffffff4f;
+    padding: 3px;
+    border-radius: 40%;
+    display: block;
+    position: absolute;
+    top: 91%;
+    height: 1.5em;
 }
 #url {
     justify-self: end;
