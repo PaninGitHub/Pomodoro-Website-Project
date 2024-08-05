@@ -42,7 +42,9 @@ var settime = 0;
 var time = settime;
 var state = "start";
 var thisInterval;
-var this_periods = [];
+var this_cycle = [];
+var this_periodlist = [];
+var periods = [];
 var registered_periods = [];
 var c = '';
 
@@ -62,48 +64,57 @@ function askNotificationPermission() {
 
 function addPeriod(l){
     let period = ""
-    for(let i = 0; i < c.periods.length; i++){
-        if(c.periods[i].label == l){
-            period = c.periods[i]
+    for(let i = 0; i < periods.length; i++){
+        if(periods[i].label == l){
+            period = periods[i]
             break;
         }
     }
-    this_periods.push(
-        new Period(
-            period.name,
-            period.label,
-            period.duration,
-            period.color,
-            period.description,
-            period.sound,
-            period.notificationWhenFinished
+    //Makes sure that the period is skipped if insufficent infomation is given
+    try {
+        this_periodlist.push(
+            new Period(
+                period.name,
+                period.label,
+                period.duration,
+                period.color,
+                period.description,
+                period.sound,
+                period.notificationWhenFinished
+            )
         )
-    )
+    } catch (error) {
+        console.error(error + `: ${period}`)
+    }
 }
 
 function removePeriod(l){
     pomodots.removeChild(pomodots.children[l]);
-    this_periods;
+    this_periodlist;
     if(pomodots.children.length > 0 && !pomodots.children[0].classList.contains('shadow')){
         pomodots.children[0].classList.add('shadow');
     }
-    this_periods.splice(0, 1);
+    this_periodlist.splice(0, 1);
 }
 
 function startOfTimer(){
+    //Removes warning when allowed to use pomodoro feature
+    document.getElementById("general_settings_warning").innerHTML = ``
     //Handles cases where the mode uses the pomodoro feature but the cycle is empty
     if(c.pomodoro_mode == "classic" || c.pomodoro_mode == "overflow"){
         try{
-            if(c.cycle == undefined){
+            if(this_cycle == undefined){
                 throw new Error("Setting 'cycle' is undefined when attempting to start the timer. Defaulting to timer mode")
             }
-            else if(c.cycle.length === 0){
+            else if(this_cycle.length === 0){
                 throw new Error("Setting 'cycle' is empty when attempting to start the timer. Defaulting to timer mode")
             }
         } catch (error) {
             console.error(error)
             c.pomodoro_mode = "timer"
             time = 0;
+            document.getElementById("general_settings_warning").innerHTML = `Can't change to the selected mode: No periods were given`
+            updateSettings()
         }
     }
     //Makes sure that the input screen is still not shown is user was on it when switched
@@ -112,8 +123,8 @@ function startOfTimer(){
         clockinput.classList.replace("time-input-show", "time-input-hide")
     }
     clearInterval(thisInterval)
-    if(this_periods.length > 0){
-       this_periods = []
+    if(this_periodlist.length > 0){
+       this_periodlist = []
     }
     state = 'start'
     button.dataset.state = 'start'
@@ -128,21 +139,59 @@ function startOfTimer(){
 
 function registerPeriods(){
     registered_periods = [];
-    this_periods.forEach((period) => {
+    this_periodlist.forEach((period) => {
         if(!registered_periods.includes(period.label)){
             registered_periods.push(period.label)
         }
     })
 }
 
+function populateCyclePresets(){
+    c.cycle_presets.forEach((pre) => {
+        const node = document.createElement('option')
+        node.textContent = pre.name
+        node.value = pre.name
+        document.getElementById("cycle_presets").appendChild(node)
+    })
+}
+
+function setCyclePreset(pre){
+    c.selected_cycle_preset = pre
+    if(pre === 'no_preset'){
+        this_cycle = c.cycle
+    }
+    else{
+        c.cycle_presets.forEach((p) => {
+            if(p.name == pre){
+                this_cycle = p.cycle
+                //Fills in preset infomation to the period list on the website
+                periods.forEach((pp) => {
+                    if(pp.label == p.label){
+                        for(let prop in p){
+                            if(p.hasOwnProperty(prop) && pp.hasOwnProperty(prop)){
+                                pp[prop] = p[prop]
+                            }
+                        }
+                    }
+                
+                })
+                startOfTimer()
+                return;
+            }
+        })
+    }
+    startOfTimer()
+    return;
+}
+
 function updateCycle(){
-    this_periods = [];
+    this_periodlist = [];
     for(let i = 0; i < c.amtOfCycles; i++){
-        for(let j = 0; j < c.cycle.length; j++){
-            if(isMultiCycle(c.cycle[j])){
+        for(let j = 0; j < this_cycle.length; j++){
+            if(isMultiCycle(this_cycle[j])){
                 
             }
-            this_periods.push(c.cycle[j])
+            this_periodlist.push(this_cycle[j])
         }
     }
 }
@@ -153,7 +202,7 @@ function updateDots(restart){
         while(pomodots.children.length > 0){
             pomodots.removeChild(pomodots.children[0])
         }
-        this_periods.forEach((dot) => {
+        this_periodlist.forEach((dot) => {
             appendDot(dot)
         })
         if(pomodots.children.length > 0){
@@ -164,15 +213,15 @@ function updateDots(restart){
     else{
         //Makes sure that in Overflow mode another cycle iteration is added if the periods created are less that what is requested to be showen
         if(c.pomodoro_mode == "overflow"){
-            max_periods = lengthOfCycle(c.cycle)
-            if(this_periods.length < max_periods){
-                appendCycle(c.cycle)
+            max_periods = lengthOfCycle(this_cycle)
+            if(this_periodlist.length < max_periods){
+                appendCycle(this_cycle)
             }
         }
         //Checks whether any new dots were added
-        if(pomodots.children.length < this_periods.length){
-            for(let i = pomodots.children.length; i < this_periods.length; i++){
-                appendDot(this_periods[i])
+        if(pomodots.children.length < this_periodlist.length){
+            for(let i = pomodots.children.length; i < this_periodlist.length; i++){
+                appendDot(this_periodlist[i])
             }
         }
         //Shows any new dots
@@ -224,8 +273,8 @@ function displayTime(){
     updateTimeEstimate()
 }
 
-function initalizeSettings(){
-    displayed_settings.forEach((ele) => {
+function updateDisplayOfSettings(settings){
+    settings.forEach((ele) => {
         switch(ele.id){
             case 's_time_est_toggle':
                 ele.checked = c.glowFirstElement
@@ -233,8 +282,30 @@ function initalizeSettings(){
             case 's_glow_first_toggle':
                 ele.checked = c.showTimeEstimated
                 break;
+            case 's_strch_bkground':
+                ele.value = c.stretch_background_image
+                break;
+            case 's_img_url':
+                ele.value = c.background_image
+                break
+            case 's_time_est_format':
+                ele.value = c.est_time_format
+                break;
+            case 's_notif_all':
+                ele.value = c.notificationForAll
+                break;
+            case 's_timer_mode':
+                ele.value = c.pomodoro_mode
+                break;
+            case 's_max_dots_shown':
+                ele.value = c.max_periods
+                break;
         }
     })    
+}
+function initalizeSettings(){
+    updateDisplayOfSettings(displayed_settings)  
+    populateCyclePresets()
     stretchBackgroundImage(c.stretch_background_image)
     registered_periods.forEach((element) => {
         let period = getPeriodByLabel(element)
@@ -246,15 +317,16 @@ function initalizeSettings(){
 }
 
 function getPeriodByLabel(value){
-    for(let i = 0; i < c.periods.length; i++){
-        if(c.periods[i].label == value){
-            return(c.periods[i])
+    for(let i = 0; i < periods.length; i++){
+        if(periods[i].label == value){
+            return(periods[i])
             break;
         }
     }
 }
 
 function updateSettings(){
+    updateDisplayOfSettings(displayed_settings) 
     if(settings_set_time_dur.value != ""){
         //Change HTML based on settings
     }
@@ -272,8 +344,8 @@ function updateTimeEstimate(){
     let min = now.getMinutes();
     let sec = now.getSeconds();
     let timeest = hr * 3600 + min * 60 + sec + time;
-    for(let i = 1; i < this_periods.length; i++){
-        timeest += this_periods[i].duration
+    for(let i = 1; i < this_periodlist.length; i++){
+        timeest += this_periodlist[i].duration
     }
     if(c.est_time_format == "24-hr"){
         estHr.innerHTML = ~~(timeest / 3600).toString().padStart(2, '0');
@@ -356,7 +428,7 @@ function setTimeByInput(){
 }
 
 function timerDone(skip){
-    let tp = this_periods[0] //tp -> This Period
+    let tp = this_periodlist[0] //tp -> This Period
     if(c.pomodoro_mode == "timer"){
         time = 0
         let i = new Audio(c.default_alarm_sound)
@@ -374,7 +446,7 @@ function timerDone(skip){
         tp.pushNotification(c.notificationForAll)
     }
     removePeriod(0)
-    tp = this_periods[0]
+    tp = this_periodlist[0]
     statustext.style.opacity = '1';
     state = "start"
     button.innerHTML = "Start";
@@ -384,7 +456,7 @@ function timerDone(skip){
             settime = tp.duration
             time = settime
         } else {
-            console.log(`Error: Duration is invalid for this period ${this_periods[0].name}`)
+            console.log(`Error: Duration is invalid for this period ${this_periodlist[0].name}`)
         }
         periodtitle.innerHTML = tp.name;
         displayTime()
@@ -396,7 +468,7 @@ function timerDone(skip){
         displayTime()
         clearInterval(thisInterval);
     }
-    if(this_periods.length <= 0){
+    if(this_periodlist.length <= 0){
         button.innerHTML = "Restart"
         periodtitle.classList.add('hide')
         state = "done"
@@ -449,7 +521,7 @@ function lengthOfCycle(cycle){
         {
             //Adds in amt. of periods times it's multiplitive cycle
             l += ((Number(element.substring(0, element.length - 1)) - 1) * (cycle.indexOf(element) - checkpoint)) - 1
-            checkpoint = c.cycle.indexOf(element) + 1;
+            checkpoint = this_cycle.indexOf(element) + 1;
             return;
         }
     });
@@ -478,7 +550,7 @@ function appendCycle(cycle){
 }
 
 function setPeriods(mode){
-    this_periods = [];
+    this_periodlist = [];
     let this_amtOfCycles = c.amtOfCycles
     //Sets time at the beginning
     if(mode == "timer" || mode == "stopwatch"){
@@ -491,13 +563,13 @@ function setPeriods(mode){
     //Pending Cycle
     for(let i = 0; i < this_amtOfCycles; i++)
     {
-        appendCycle(c.cycle)
+        appendCycle(this_cycle)
     }
-    let tp = this_periods[0] //tp -> This Period
+    let tp = this_periodlist[0] //tp -> This Period
     if(tp.duration != undefined){
         settime = tp.duration
     }
-    if(this_periods.length >= 1)
+    if(this_periodlist.length >= 1)
     {
         periodtitle.classList.add('show')
         periodtitle.innerHTML = tp.name
@@ -529,6 +601,9 @@ function runStopwatch(){
 function checkState(){
     if (button.innerHTML == 'Stop')
     {
+        if(c.pomodoro_mode == "stopwatch"){
+            settime = 0
+        }
         state = 'start'
         clearInterval(thisInterval);
         time = settime;
@@ -583,13 +658,15 @@ function checkState(){
 
 fetch(`../data/dev-configs/test-config.json`).then(res => res.json()).then(data => {
     c = data;
+    periods = c.periods
+    this_cycle = c.cycle
     buttonclickaudio = new Audio(c.default_button_press_sound);
     uploadBackgroundIMG(c.background_image)
     askNotificationPermission()
     pomodots.removeChild(pomodots.children[0]);
     startOfTimer();
     button.dataset.state = 'start';
-    console.log(`Loaded in ${this_periods.length} periods`)
+    console.log(`Loaded in ${this_periodlist.length} periods`)
     setInterval(updateTimeEstimate, 1000)
     initalizeSettings()
 }).catch(error => {
@@ -751,7 +828,9 @@ displayed_settings.forEach((ele) => {
                 } catch(error){
                     console.log(`${error} => Caused when element ${ele.id} was changed`)
                 }
-                break; 
+                break;
+            case 'cycle_presets':
+                setCyclePreset(this.value)
         }
     })
 })

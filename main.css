@@ -201,6 +201,7 @@ body {
     display: inline-block;
 }
 .i_settings_cat{
+    color: #ffffff;
     display:flex;
     align-items: center;
     justify-content: space-between;
@@ -218,6 +219,12 @@ body {
 }
 .s_warning_text{    
     align-self: flex-end;
+    font-size: .75em;
+    color: #fa8a82;
+}
+.s_warning_text.center{
+    margin-top: 6px;
+    align-self: center;
     font-size: .75em;
     color: #fa8a82;
 }

@@ -60,7 +60,7 @@
         <aside class="settings_aside_class settings_shown" id="settings_aside">
             <div class="settings_container">
                 <legend class="settings_cat_title" id="general_settings_legend">General Settings</legend>
-                <div class="settings_cat">
+                <div class="settings_cat" id="general_settings_cat"> 
                     <div class="i_settings_cat" id="s_img_url">
                         Image URL?
                         <input class="s_input" id="s_url_bkground_img">
@@ -82,7 +82,7 @@
                             <div class="s_toggle__fill"></div>
                         </label>
                     </div>
-                    <div class="i_settings_cat" id="s_time_est_format">
+                    <div class="i_settings_cat" id="s_time_est_format_div">
                         Time Estimate Format
                         <select class="s_dropdown" id="s_time_est_format">
                             <option value="select">Select</option>
@@ -106,9 +106,17 @@
                         </select>
                     </div>
                     <div class="i_settings_cat" id="s_override_n">
+                        Max Dots Shown
+                        <input class="s_input" id="s_max_dots_shown">
+                    </div>
+                    <span id="general_settings_warning" class="s_warning_text">(Warning: Will reset timer)</span>
+                </div>
+            <legend class="settings_cat_title" id="time_settings_legend">Timer Settings <div id="spdot" class="s_p_dot"></div></legend>
+            <span class="s_warning_text center">(Warning: Will reset timer and current progress)</span>
+                <div class="settings_cat">
+                    <div class="i_settings_cat" id="why_does_this_need_an_id_again">
                         <div>
                         Timer Mode
-                        <span class="s_warning_text">(Warning: Will reset timer)</span>
                         </div>
                         <select class="s_dropdown" id="s_timer_mode">
                             <option value="classic">Classic</option>
@@ -117,9 +125,12 @@
                             <option value="stopwatch">Stopwatch</option>
                         </select>
                     </div>
-                    <div class="i_settings_cat" id="s_override_n">
-                        Max Dots Shown
-                        <input class="s_input" id="s_max_dots_shown">
+                    <div class="i_settings_cat">
+                        Cycle Preset:
+                        <select class="s_dropdown" id="cycle_presets">
+                            <option value="select">Select</option>
+                            <option value="no_preset">No Preset</option>
+                        </select>
                     </div>
                 </div>
             <legend class="settings_cat_title" id="time_settings_legend">Time Period Settings <div id="spdot" class="s_p_dot"></div></legend>
@@ -127,10 +138,10 @@
                     <select class="s_p_dropdown" id="s_p_dropdown">
                         <option id="s_p_option" value="select">Select</option>
                     </select>
+                    <label class="i_settings_cat" placeholder="15" for=""> Time Duration:
+                        <input class="s_input" id="s_p_1">
+                    </label>
                 </div>
-                <label class="i_settings_cat" placeholder="15" for=""> Time Duration:
-                    <input class="s_input" id="s_p_1">
-                </label>
             </div>
         </aside> 
     </body>

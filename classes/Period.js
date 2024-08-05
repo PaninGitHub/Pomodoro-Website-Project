@@ -2,6 +2,9 @@
 
 export class Period {
     constructor(name, label, duration, color, description = "", sound = "../assets/audio/clock-alarm-8761.mp3", notificationWhenFinished = "true"){
+        if(name === undefined || duration === undefined){
+            throw new Error(`Either the name and/or duration wasn't given when constructing this peroid`)
+        }
         this.name = name;
         this.label = label; //Used for abberiviations should I don't gotta type out "sHoRt bReAk" every time.
         this.duration = duration;
