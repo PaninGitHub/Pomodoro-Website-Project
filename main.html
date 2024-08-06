@@ -20,10 +20,11 @@
         </script>
     <body id="body">
         <div id="settings_icon_background"><img src="./assets/icons/settings.png" alt="Settings" class="settings_icon_class" id="settings_icon"></div>
-        <div class="helptext">
+        <div class="helptext" id="help_text">
             <p>Shift while timer is running to stop</p>
             <p>Ctrl while timer is running to skip</p>
             <p>Space to toggle button</p>
+            <button class="help_button" id="help_button">Hide Controls</button>
         </div>
         <div id="background" class="background hide">
         <div class="timer-background" id="timer-background"> 
@@ -56,9 +57,9 @@
             <div class="clock est" id="time-est-div"> 
                 Time EST: <span class="timenum" id="hr-est"> 00 </span> : <span class="timenum" id="min-est"> 00 </span>
             </div>
+            <!-- <div id="descriptiontext">Hi</div> -->
         </div>
         </div>
-        <!-- <img src="./assets/icons/question-mark.png" alt="Help" class="help_icon_class" id="help_icon"> -->
         <div id="url">
             www.simplidoro.com
         </div>
@@ -113,7 +114,7 @@
                     </div>
                     <div class="i_settings_cat" id="s_override_n">
                         Max Dots Shown
-                        <input class="s_input" id="s_max_dots_shown">
+                        <input class="s_input" id="s_max_dots_shown" type="number" min="1" max="30">
                     </div>
                     <span id="general_settings_warning" class="s_warning_text">(Warning: Will reset timer)</span>
                 </div>

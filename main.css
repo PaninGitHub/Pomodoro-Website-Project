@@ -14,16 +14,44 @@ body {
 }
 p{
     margin: 4px;
+    font-size: .8em;
+}
+.help_button{
+    transition: 0.4s;
+    border: none;
+    border-radius: 7px;
+    font-family: Source Code Pro, Helvetica, sans-serif;
+    font-style: bold;
+    font-weight: 500;
+    font-size: .75em;
+}
+.help_button:hover{
+    transition: 0.2s;
     font-size: 1em;
 }
 .helptext{
+    padding: 10px 5px;
+    padding-top: 50px;
+    border-radius: 12px;
+    background-color: rgba(20, 20, 20, .2);
+    box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, .2);
     position: fixed;
     display: flex;
     flex-direction: column;
     text-align: center;
     flex-wrap: nowrap;
-    margin: 0px;
-    top: 10px;
+    top: -40px;
+    transition: .6s;
+}
+.helptext.hidden{
+    top: -120px;
+    transition: .5s;
+    opacity: .025;
+}
+.helptext.hidden:hover{
+    top: -110px;
+    transition: .2s;
+    opacity: 1;
 }
 .timer {
     text-align: center;
@@ -126,6 +154,7 @@ p{
     right: 12px;
 }
 .settings_aside_class{
+    overflow-y: auto;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -281,7 +310,7 @@ p{
     z-index: 10;
     display: block;
     position: absolute;
-    top: 92dvh;
+    bottom: 15px;
     right: 1em;
     background-color: #bbbbbb0f;
     border-radius: 20%;
@@ -317,7 +346,7 @@ p{
     color: white;
     display: block;
     position: absolute;
-    top: 95%;
+    bottom: 15px;
     font-size: 1em;
 }
 #statustext {

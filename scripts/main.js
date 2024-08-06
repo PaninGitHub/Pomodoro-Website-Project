@@ -29,7 +29,6 @@ var tps_selected = ""
 //Booleans
 var isCtrlUp = false;
 var isShiftUp = false;
-var isEnterUp = false;
 
 //Imports
 import { Period } from "../classes/Period.js";
@@ -159,6 +158,7 @@ function setCyclePreset(pre){
     c.selected_cycle_preset = pre
     if(pre === 'no_preset'){
         this_cycle = c.cycle
+        //Javascript doesn't have a way to deep copy without more code I'm too lazy to implement so I guess we have to do this
         periods = JSON.parse(JSON.stringify(c.periods))
     }
     else{
@@ -202,6 +202,12 @@ function updateCycle(){
 }
 
 function updateDots(restart){
+    if(c.max_periods > 30){
+        c.max_periods = 30
+    }
+    if(c.max_periods < 0){
+        return;
+    }
     let max_periods = c.max_periods
     if(restart){
         while(pomodots.children.length > 0){
@@ -218,7 +224,9 @@ function updateDots(restart){
     else{
         //Makes sure that in Overflow mode another cycle iteration is added if the periods created are less that what is requested to be showen
         if(c.pomodoro_mode == "overflow"){
-            max_periods = lengthOfCycle(this_cycle)
+            if(max_periods > lengthOfCycle(this_cycle)){
+                max_periods = lengthOfCycle(this_cycle)
+            }
             if(this_periodlist.length < max_periods){
                 appendCycle(this_cycle)
             }
@@ -279,6 +287,17 @@ function displayTime(){
 }
 
 function updateDisplayOfSettings(settings){
+    if(settings == 'help_text'){
+        if(c.hide_help){
+            document.getElementById('help_button').innerHTML = "Show Controls"
+            document.getElementById('help_text').classList.add('hidden')
+        }
+        else{
+            document.getElementById('help_button').innerHTML = "Hide Controls"
+            document.getElementById('help_text').classList.remove('hidden')
+        }
+        return;
+    }
     settings.forEach((ele) => {
         switch(ele.id){
             case 's_time_est_toggle':
@@ -310,6 +329,7 @@ function updateDisplayOfSettings(settings){
 }
 function initalizeSettings(){
     updateDisplayOfSettings(displayed_settings)  
+    updateDisplayOfSettings('help_text')
     populateCyclePresets()
     stretchBackgroundImage(c.stretch_background_image)
     registered_periods.forEach((element) => {
@@ -663,9 +683,9 @@ function checkState(){
 
 fetch(`../data/dev-configs/test-config.json`).then(res => res.json()).then(data => {
     c = data;
+    //Javascript doesn't have a way to deep copy without more code I'm too lazy to implement so I guess we have to do this
     periods = JSON.parse(JSON.stringify(c.periods))
     this_cycle = JSON.parse(JSON.stringify(c.cycle))
-    console.log(c.cycle_presets)
     buttonclickaudio = new Audio(c.default_button_press_sound);
     uploadBackgroundIMG(c.background_image)
     askNotificationPermission()
@@ -689,7 +709,11 @@ button.addEventListener("click", function(){
 
 //Handles when a key is pressed
 document.addEventListener('keydown', (e) => {
-    if(e.code === "ControlLeft")
+    if(!e.repeat &&  e.code === "Space"){
+        buttonclickaudio.play() 
+        checkState()
+    }
+    else if(e.code === "ControlLeft")
     {
         isCtrlUp = true;
         if(!e.repeat && button.dataset.intrans === "none" && (state == 'running' || state == 'paused'))
@@ -777,6 +801,17 @@ clockdisplay.addEventListener("click", function(){
     button.innerHTML = "Enter";
 })
 
+document.getElementById('help_button').addEventListener("click", function(){
+    if(c.hide_help == false){
+        c.hide_help = true;
+        updateDisplayOfSettings('help_text')
+    }
+    else if(c.hide_help == true){
+        c.hide_help = false;
+        updateDisplayOfSettings('help_text')
+    }
+})
+
 //Enforces a 2-digit limit when changing time in the clock
 for(let sel of document.getElementsByClassName("Tin")){
     sel.addEventListener('input', function(){
@@ -788,7 +823,7 @@ for(let sel of document.getElementsByClassName("Tin")){
 
 ////Event Handler for Elements
 //Settings
-
+   
 
 displayed_settings.forEach((ele) => {
     ele.addEventListener('change', function(){
@@ -839,12 +874,4 @@ displayed_settings.forEach((ele) => {
                 setCyclePreset(this.value)
         }
     })
-})
-
-document.getElementById("help_icon").addEventListener('mouseover', function(){
-
-})
-
-document.getElementById("help_icon").addEventListener('mouseleave', function(){
-    
 })
