@@ -19,7 +19,6 @@ const settings_icon_background = document.getElementById('settings_icon_backgrou
 const settings_icon = document.getElementById('settings_icon')
 const settings_aside = document.getElementById('settings_aside')
 const settings_set_time_dur = document.getElementById('s_p_1')
-
 const displayed_settings = document.querySelectorAll('.s_dropdown, .s_input, .s_toggle__input, .s_p_dropdown')
 //const jsonData = require('./configs/default-config.json')
 var buttonclickaudio;
@@ -34,6 +33,7 @@ var isShiftUp = false;
 import { Period } from "../classes/Period.js";
 import {trans} from "./transitions.js";
 
+
 //Sets variables. Time represents seconds in this case
 var min;
 var sec;
@@ -46,6 +46,7 @@ var this_periodlist = [];
 var periods = [];
 var registered_periods = [];
 var c = '';
+const intervalinms = 250
 
 
 //Functions
@@ -279,8 +280,12 @@ function updateDots(restart){
 }   
 
 function displayTime(){
-    min = ~~(time / 60);
-    sec = time % 60;
+    min = Math.floor(time / 60);
+    sec = Math.ceil(time % 60);
+    if(sec == 60){
+        min += 1
+        sec = 0 
+    }
     disMin.innerHTML = min.toString().padStart(2, '0');
     disSec.innerHTML = sec.toString().padStart(2, '0');
     updateTimeEstimate()
@@ -603,15 +608,19 @@ function setPeriods(mode){
     updateDots(true)
 }
 
-function runTimer(){
+function runTimer(bef){
     thisInterval = setInterval(function() {
-        if (time <= 1){
+        console.log(time)
+        if (time <= intervalinms / 1000){
             timerDone(false);
             return;
         }
-            time -= 1;
-            displayTime();
-    }, 1000)
+        let aft = Date.now()
+        let change = aft - bef
+        time -= change / 1000 //Converts change in ms to s
+        bef = aft
+        displayTime()
+    }, intervalinms)
 }
 
 function runStopwatch(){
@@ -647,7 +656,7 @@ function checkState(){
             runStopwatch();
         }
         else{
-            runTimer();
+            runTimer(Date.now());
         }
     }
     else if (state == 'running')
@@ -787,7 +796,7 @@ settings_icon_background.addEventListener('click', function(){
 
 //Changing time in clock
 clockdisplay.addEventListener("click", function(){
-    inSec.value = (time % 60).toString().padStart(2, '0');
+    inSec.value = Math.ceil(time % 60).toString().padStart(2, '0');
     inMin.value = (~~(time % 3600 / 60)).toString().padStart(2, '0');
     inHr.value = (~~(time / 3600)).toString().padStart(2, '0');
     clockdisplay.classList.replace("time-display-show", "time-display-hide")
