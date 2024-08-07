@@ -18,6 +18,8 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
         crossorigin="anonymous">
         </script>
+        <link rel="stylesheet" href="/Coloris-0.24.0/dist/coloris.min.css"/>
+        <script src="/Coloris-0.24.0/dist/coloris.min.js"></script>
     <body id="body">
         <div id="settings_icon_background"><img src="./assets/icons/settings.png" alt="Settings" class="settings_icon_class" id="settings_icon"></div>
         <div class="helptext" id="help_text">
@@ -118,7 +120,7 @@
                     </div>
                     <span id="general_settings_warning" class="s_warning_text">(Warning: Will reset timer)</span>
                 </div>
-            <legend class="settings_cat_title" id="time_settings_legend">Timer Settings <div id="spdot" class="s_p_dot"></div></legend>
+            <legend class="settings_cat_title" id="time_settings_legend">Timer Settings</legend>
             <span class="s_warning_text center">(Warning: Will reset timer and current progress)</span>
                 <div class="settings_cat">
                     <div class="i_settings_cat" id="why_does_this_need_an_id_again">
@@ -146,8 +148,11 @@
                         <option id="s_p_option" value="select">Select</option>
                     </select>
                     <label class="i_settings_cat" placeholder="15" for=""> Time Duration:
-                        <input class="s_input" id="s_p_1">
+                        <input class="s_input" id="s_p_dur">
                     </label>
+                    <div class="i_settings_cat" id="tp_color"> Color: 
+                        <input data-coloris class="s_input" id="s_p_color" >
+                    </div>
                 </div>
             </div>
         </aside> 

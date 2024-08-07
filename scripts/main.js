@@ -18,12 +18,10 @@ const periodtitle = document.getElementById('periodtitle')
 const settings_icon_background = document.getElementById('settings_icon_background')
 const settings_icon = document.getElementById('settings_icon')
 const settings_aside = document.getElementById('settings_aside')
-const settings_set_time_dur = document.getElementById('s_p_1')
 const displayed_settings = document.querySelectorAll('.s_dropdown, .s_input, .s_toggle__input, .s_p_dropdown')
 //const jsonData = require('./configs/default-config.json')
 var buttonclickaudio;
 var tps_selected = ""
-
 
 //Booleans
 var isCtrlUp = false;
@@ -32,7 +30,6 @@ var isShiftUp = false;
 //Imports
 import { Period } from "../classes/Period.js";
 import {trans} from "./transitions.js";
-
 
 //Sets variables. Time represents seconds in this case
 var min;
@@ -279,6 +276,18 @@ function updateDots(restart){
     }
 }   
 
+function updateDotsByPeriods(prop){
+    this_periodlist.forEach((p) => {
+        let ele = document.getElementById(p.dot_id);
+        if(prop == "color"){
+            p.color = getPeriodByLabel(p.label).color
+            ele.style.backgroundColor = p.color
+        }
+        if(prop == "duration")
+            p.duration = getPeriodByLabel(p.label).duration
+    })
+}
+
 function displayTime(){
     min = Math.floor(time / 60);
     sec = Math.ceil(time % 60);
@@ -350,7 +359,6 @@ function getPeriodByLabel(value){
     for(let i = 0; i < periods.length; i++){
         if(periods[i].label == value){
             return(periods[i])
-            break;
         }
     }
 }
@@ -399,7 +407,6 @@ function updateTimeEstimate(){
     }
     //Idk if Javascript will delete these element, but ima do it manually just to avoid any memory leaks
     now, hr, min, sec, timeest = null;
-
 }
 
 function isValidURL(url) {
@@ -610,7 +617,6 @@ function setPeriods(mode){
 
 function runTimer(bef){
     thisInterval = setInterval(function() {
-        console.log(time)
         if (time <= intervalinms / 1000){
             timerDone(false);
             return;
@@ -625,9 +631,16 @@ function runTimer(bef){
 
 function runStopwatch(){
     thisInterval = setInterval(function() {
-            time += 1;
-            displayTime();
-    }, 1000)
+        if (time <= intervalinms / 1000){
+            timerDone(false);
+            return;
+        }
+        let aft = Date.now()
+        let change = aft - bef
+        time += change / 1000 //Converts change in ms to s
+        bef = aft
+        displayTime()
+    }, intervalinms)
 }
 
 //Made this a seperate function so that I don't have to copy and paste code 
@@ -681,7 +694,6 @@ function checkState(){
     }
     console.log("Timer is in " + state + " mode")
 }
-
 
 //Start of the program
 /*So exciting!!
@@ -831,9 +843,11 @@ for(let sel of document.getElementsByClassName("Tin")){
 }
 
 ////Event Handler for Elements
-//Settings
-   
+document.querySelector('#tp_color').addEventListener('click', function(){
 
+})
+
+//Settings
 displayed_settings.forEach((ele) => {
     ele.addEventListener('change', function(){
         switch(ele.id)
@@ -869,18 +883,42 @@ displayed_settings.forEach((ele) => {
             case 's_timer_mode':
                 c.pomodoro_mode = this.value
                 startOfTimer()
+            case 'cycle_presets':
+                setCyclePreset(this.value)
             //Individual Periods 
             case 's_p_dropdown':
                 try{
-                document.getElementById("spdot").style.backgroundColor = getPeriodByLabel(this.value).color;
-                tps_selected = getPeriodByLabel(this.value);
-                settings_set_time_dur.value = tps_selected.duration;
+                    document.getElementById("spdot").style.backgroundColor = getPeriodByLabel(this.value).color;
+                    tps_selected = getPeriodByLabel(this.value);
+                    document.getElementById("s_p_dur").value = tps_selected.duration;
+                    document.getElementById("s_p_color").value = tps_selected.color;
                 } catch(error){
                     console.log(`${error} => Caused when element ${ele.id} was changed`)
                 }
                 break;
-            case 'cycle_presets':
-                setCyclePreset(this.value)
-        }
+            case 's_p_dur':
+                try{
+                    tps_selected = getPeriodByLabel(document.getElementById('s_p_dropdown').value);
+                    tps_selected.duration = Number(this.value);
+                    updateDotsByPeriods("duration");
+                    //Checks if timer hasn't before changing the time
+                    settime = Number(this_periodlist[0].duration)
+                    if(state == "start"){
+                        time = settime
+                        displayTime()
+                    }
+                } catch (error){
+                    console.log(error)
+                }
+            case 's_p_color':
+                try {
+                    tps_selected = getPeriodByLabel(document.getElementById('s_p_dropdown').value);
+                    tps_selected.color = this.value;
+                    document.getElementById("spdot").style.backgroundColor = this.value;
+                    updateDotsByPeriods("color");
+                } catch (error) {
+                    console.log(error)
+                }
+            }
     })
 })

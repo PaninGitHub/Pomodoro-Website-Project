@@ -45,4 +45,17 @@ export class Period {
             }
         }
     }
+    updatePeriod(prop, value){
+        //Checks if color is valid
+        if(prop = 'color'){
+            let reg = /^#([0-9a-f]{3}){1,2}$/i;
+            if(reg.test(value)){
+                this.color = value;
+            } else {
+                throw new Error(`Error: The inputted value ${value} for ${prop} is not in correct format.`)
+            }
+            return;
+        }
+        this.keys(prop) = value
+    }
 }
