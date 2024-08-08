@@ -31,6 +31,9 @@ var isShiftUp = false;
 import { Period } from "../classes/Period.js";
 import {trans} from "./transitions.js";
 
+//Testing purposes 
+const token = 'devmode'
+
 //Sets variables. Time represents seconds in this case
 var min;
 var sec;
@@ -546,7 +549,6 @@ function isMultiCycle(element){
     return(isMulti)
 }
 
-//Returns lenght of Cycle
 function lengthOfCycle(cycle){
     let l = 0
     let checkpoint = 0;
@@ -700,10 +702,7 @@ function checkState(){
 /* */
 
 //Loads JSON
-
-
-fetch(`../data/dev-configs/test-config.json`).then(res => res.json()).then(data => {
-    c = data;
+function startJSON(){
     //Javascript doesn't have a way to deep copy without more code I'm too lazy to implement so I guess we have to do this
     periods = JSON.parse(JSON.stringify(c.periods))
     this_cycle = JSON.parse(JSON.stringify(c.cycle))
@@ -716,10 +715,52 @@ fetch(`../data/dev-configs/test-config.json`).then(res => res.json()).then(data 
     console.log(`Loaded in ${this_periodlist.length} periods`)
     setInterval(updateTimeEstimate, 1000)
     initalizeSettings()
+}
+
+//Fetch functions
+function updateUserConfig(configId, updates){
+    console.log(JSON.stringify(updates))
+    //Fetches the database and updates the specficied user's document
+    fetch(`http://localhost:3000/user_configs/${configId}`, {
+        method: 'PATCH',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updates)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Updated User Config')
+    })
+    .catch(error => {
+        console.log('Error updating user config:', error)
+    })
+}
+
+//Used to fetch data
+if(token == 'devmode'){
+    fetch(`../data/dev-configs/test-config.json`)
+    .then(res => res.json())
+    .then(data => {
+    c = data;
+    startJSON()
 }).catch(error => {
     // Handle any errors that occur during the fetch
     console.error('Error fetching or parsing data:', error);
 });
+} else {
+    fetch(`http://localhost:3000/user_configs/${token}`)
+    .then(res => res.json())
+    .then(data => {
+        console.log('Fetched User Configs:', data);
+        c = data;
+        startJSON()
+    }).catch(error =>{
+        console.log('Error fetching user configs', error);
+    })
+
+}
 
 
 //Handles when the button is pressed
@@ -842,11 +883,6 @@ for(let sel of document.getElementsByClassName("Tin")){
 })
 }
 
-////Event Handler for Elements
-document.querySelector('#tp_color').addEventListener('click', function(){
-
-})
-
 //Settings
 displayed_settings.forEach((ele) => {
     ele.addEventListener('change', function(){
@@ -855,33 +891,57 @@ displayed_settings.forEach((ele) => {
             //General Settings
             case 's_time_est_toggle':
                 c.showTimeEstimated = this.checked;
+                updateUserConfig(token, {
+                    showTimeEstimated: this.checked
+                })
                 updateTimeEstimate();
                 break;
             case 's_time_est_format':
                 c.est_time_format = this.value;
+                updateUserConfig(token, {
+                    est_time_format: this.value
+                })
                 updateTimeEstimate();
                 break;
             case 's_glow_first_toggle':
                 c.glowFirstElement = this.checked;
+                updateUserConfig(token, {
+                    glowFirstElement: this.checked
+                })
                 updateDots(false)
                 break;
             case 's_notif_all':
                 c.notificationForAll = this.value
+                updateUserConfig(token, {
+                    notificationForAll: this.value
+                })
                 break;
             case 's_strch_bkground':
                 c.stretch_background_image = this.value
+                updateUserConfig(token, {
+                    stretch_background_image: this.value
+                })
                 stretchBackgroundImage(c.stretch_background_image)
                 break;
             case 's_url_bkground_img':
                 c.background_image = this.value
+                updateUserConfig(token, {
+                    background_image: this.value
+                })
                 uploadBackgroundIMG(c.background_image)   
                 break; 
             case 's_max_dots_shown':
-                c.max_periods = this.value
+                c.max_periods = Number(this.value)
+                updateUserConfig(token, {
+                    max_periods: Number(this.value)
+                })
                 updateDots(false)
                 break; 
             case 's_timer_mode':
                 c.pomodoro_mode = this.value
+                updateUserConfig(token, {
+                    pomodoro_mode: this.value
+                })
                 startOfTimer()
             case 'cycle_presets':
                 setCyclePreset(this.value)
