@@ -18,7 +18,7 @@ const periodtitle = document.getElementById('periodtitle')
 const settings_icon_background = document.getElementById('settings_icon_background')
 const settings_icon = document.getElementById('settings_icon')
 const settings_aside = document.getElementById('settings_aside')
-const displayed_settings = document.querySelectorAll('.s_dropdown, .s_input, .s_toggle__input, .s_p_dropdown')
+const displayed_settings = document.querySelectorAll('.s_dropdown, .s_input, .s_toggle__input, .s_p_dropdown') //All of the input elements for settings
 //const jsonData = require('./configs/default-config.json')
 var buttonclickaudio;
 var tps_selected = ""
@@ -35,6 +35,12 @@ import {trans} from "./transitions.js";
 const token = 'devmode'
 
 //Sets variables. Time represents seconds in this case
+//* this_cycle -> Represents the cycle that is currently being used as of the moment from the config
+//* this_periodlist -> Represents the list of periods being used in this cycle
+//* periods -> Stores the presets of each period type from the config
+//* registered_periods -> Stores each type of period that is registered in the system
+//* c -> Represents the loaded config
+
 var min;
 var sec;
 var settime = 0;
@@ -62,6 +68,11 @@ function askNotificationPermission() {
       });
 }   
 
+/** 
+ * Adds a Period object to an array by fetching the config by it's label
+ * @param {string} l - The label of the Period object
+ * 
+*/
 function addPeriod(l){
     let period = ""
     for(let i = 0; i < periods.length; i++){
@@ -88,15 +99,25 @@ function addPeriod(l){
     }
 }
 
+/** 
+ * Removes a Period object to an array as well as it's associated displayed dot through it's index
+ * @param {string} l - The index of the Period object
+ * 
+*/
 function removePeriod(l){
     pomodots.removeChild(pomodots.children[l]);
-    this_periodlist;
+    //Adds shadow to the new first dot if it didn't have one already
     if(pomodots.children.length > 0 && !pomodots.children[0].classList.contains('shadow')){
         pomodots.children[0].classList.add('shadow');
     }
-    this_periodlist.splice(0, 1);
+    this_periodlist.splice(l, 1);
 }
 
+
+/** 
+ * Starts the beginning of a new cycle.
+ * Should be ran everytime the pomodoro mode is changed or when the user wants to restart*
+*/
 function startOfTimer(){
     //Removes warning when allowed to use pomodoro feature
     document.getElementById("general_settings_warning").innerHTML = ``
@@ -155,6 +176,7 @@ function populateCyclePresets(){
     })
 }
 
+
 function setCyclePreset(pre){
     c.selected_cycle_preset = pre
     if(pre === 'no_preset'){
@@ -176,6 +198,11 @@ function setCyclePreset(pre){
     return;
 }
 
+/** 
+ * Takes a Period config and replaces it with the wanted Period config in order to load confgi presets
+ * @param {string} toReplace - The "periods" property stored in the said config to be altered
+ * @param {string} newlsit - the "periods" property stored in the said config to alter toReplace
+*/
 function matchPeriodProperties(toReplace, newlist){
     toReplace.forEach(o => {
         newlist.forEach(n => {
@@ -202,7 +229,13 @@ function updateCycle(){
     }
 }
 
+/** 
+ * Updates the display of the dots so that it matches the current cycle
+ * @param {bool} restart - Will completely reset the display if true. Otherwise it updates properties of the dot to the front-end display.
+ * Should be set to true if restarting the cycle itself
+*/
 function updateDots(restart){
+    //Makes sure to cap the amount of dots that can be displayed so that someone doesn't end up lagging the site by showing 10k dots at once
     if(c.max_periods > 30){
         c.max_periods = 30
     }
@@ -224,6 +257,7 @@ function updateDots(restart){
     }
     else{
         //Makes sure that in Overflow mode another cycle iteration is added if the periods created are less that what is requested to be showen
+        //This prevents cases where the dots displayed are less than the max_periods when they should always be equal in Overflow mode
         if(c.pomodoro_mode == "overflow"){
             if(max_periods > lengthOfCycle(this_cycle)){
                 max_periods = lengthOfCycle(this_cycle)
@@ -269,7 +303,6 @@ function updateDots(restart){
         const thisChild = pomodots.children[0]
         if(!thisChild.classList.contains('shadow') && c.glowFirstElement){
            thisChild.classList.add('shadow');
-           //thisChild.style.boxShadow = `0px 0px 4px 4px ${getComputedStyle(thisChild).backgroundColor}`;
         }
         else if(pomodots.children[0].classList.contains('shadow') && !c.glowFirstElement){
             pomodots.children[0].classList.remove('shadow')
@@ -279,6 +312,11 @@ function updateDots(restart){
     }
 }   
 
+/** 
+ * Updates a property of the dot based on any changes made in it's associated Period object.
+ * Mainly used in individual Period configurations where it affects what should be displayed.
+ * @param {string} prop - The property that was altered and thus needs to be changed by display
+*/
 function updateDotsByPeriods(prop){
     this_periodlist.forEach((p) => {
         let ele = document.getElementById(p.dot_id);
@@ -303,6 +341,10 @@ function displayTime(){
     updateTimeEstimate()
 }
 
+/** 
+ * Updates the display of the settings aside so that it matches what is in the config
+ * @param {string} settings - The element(s) that contain and send input values from the display to here 
+*/
 function updateDisplayOfSettings(settings){
     if(settings == 'help_text'){
         if(c.hide_help){
@@ -344,6 +386,10 @@ function updateDisplayOfSettings(settings){
         }
     })    
 }
+
+/** 
+ * Initalizes the settings aside and its display so that it matches what is in the config.
+*/
 function initalizeSettings(){
     updateDisplayOfSettings(displayed_settings)  
     updateDisplayOfSettings('help_text')
@@ -358,6 +404,11 @@ function initalizeSettings(){
     }) 
 }
 
+/** 
+ * Fetches the config of the requested type of Period by it's label.
+ * Tbh it should be named 'getPeriodConfigByLabel', but im too lazy for alldat
+ * @param value - The label of the requested Period type
+*/
 function getPeriodByLabel(value){
     for(let i = 0; i < periods.length; i++){
         if(periods[i].label == value){
@@ -373,6 +424,9 @@ function updateSettings(){
     }
 }
 
+/** 
+ * Updates the Time Estimate display so that it accurately protrays the...time estimate WHAT DO YOU EXPECT???
+*/
 function updateTimeEstimate(){
     if(c.showTimeEstimated && estdisplay.classList.contains('hide')){
         estdisplay.classList.remove('hide')
@@ -389,12 +443,15 @@ function updateTimeEstimate(){
         timeest += this_periodlist[i].duration
     }
     if(c.est_time_format == "24-hr"){
+        //Makes sure that the time is displayed in proper HH:MM format
         estHr.innerHTML = ~~(timeest / 3600).toString().padStart(2, '0');
         estMin.innerHTML = ~~((timeest % 3600) / 60).toString().padStart(2, '0');
     }
     else{
+        //Makes sure that the time is displayed in proper HH:MM AM/PM format
         estHr.innerHTML = ~~((timeest % 43200) / 3600)
         estMin.innerHTML = ~~((timeest % 3600) / 60)
+        //Makes sure that the HH portion stays between 00 and 12
         if(~~(timeest / 43200) % 2 == 0){
             if(~~(timeest / 3600) % 24 == 0){
                 estHr.innerHTML = 12
@@ -448,6 +505,9 @@ function stretchBackgroundImage(set){
     }
 }
 
+/** 
+ * Handles setting time by input in input mode
+*/
 function setTimeByInput(){
     let thisHour = Number(inHr.value);
     let thisMin = Number(inMin.value);
@@ -467,6 +527,10 @@ function setTimeByInput(){
     console.log("Set time to " + time);
 }
 
+/** 
+ * Handles when the Period is finished
+ * @param {bool} skip - Will instead skip the Period instead. Used for when the user wants to skip the Period before it is done.
+*/
 function timerDone(skip){
     let tp = this_periodlist[0] //tp -> This Period
     if(c.pomodoro_mode == "timer"){
@@ -515,6 +579,10 @@ function timerDone(skip){
     }
 }
 
+/** 
+ * Appends a dot and handles it based on it's respective Period. Used to update visual display
+ * @param {Period} dot - The Period that needs to be appended as a dot
+*/
 function appendDot(dot){
     //The dots only clone is a clone is made in the for loop;
     //If you put the below line outside the for loop, it won't work  
@@ -532,6 +600,14 @@ function appendDot(dot){
     }
 }
 
+/** 
+ * Determines whether said index of the cycle is a multi-cycle.
+ * A multi-cycle ('3x', '5x', '10x', etc.) is used so that the segment before it is cycle. 
+ * For instance: ['sb', 'w', '3x'] would repeat ['sb', 'w'] 3 times.
+ * Another instance: ['w', '3x', 'sb', '2x'] would repeat ['w'] 3 times, and then ['sb'] 2 times.
+ * @param {string} element - The subset of the cycle
+ * @returns {bool} isMulti
+*/
 function isMultiCycle(element){
     let isMulti = false;
     if(element.charAt(element.length - 1) == "x" && element.length > 1){
@@ -549,6 +625,11 @@ function isMultiCycle(element){
     return(isMulti)
 }
 
+/**
+ * Returns the length of the cycle
+ * @param {array} cycle
+ * @returns length 
+ */
 function lengthOfCycle(cycle){
     let l = 0
     let checkpoint = 0;
@@ -567,6 +648,10 @@ function lengthOfCycle(cycle){
     return(l)
 }
 
+/**
+ * Appends a whole cycle to this_cycle
+ * @param {array} cycle
+ */
 function appendCycle(cycle){
     let checkpoint = 0;
     cycle.forEach(element => 
@@ -588,6 +673,9 @@ function appendCycle(cycle){
         });
 }
 
+/**
+ * Sets periods initially for the timer if needed
+ */
 function setPeriods(mode){
     this_periodlist = [];
     let this_amtOfCycles = c.amtOfCycles
@@ -646,7 +734,9 @@ function runStopwatch(){
 }
 
 //Made this a seperate function so that I don't have to copy and paste code 
-//Transitions between states
+/**
+ * Checks the current state and then determines what should happen after. Used for the button below the timer
+ */
 function checkState(){
     if (button.innerHTML == 'Stop')
     {
@@ -701,7 +791,9 @@ function checkState(){
 /*So exciting!!
 /* */
 
-//Loads JSON
+/**
+ * Intializes the JSON config used
+ */
 function startJSON(){
     //Javascript doesn't have a way to deep copy without more code I'm too lazy to implement so I guess we have to do this
     periods = JSON.parse(JSON.stringify(c.periods))
@@ -717,7 +809,11 @@ function startJSON(){
     initalizeSettings()
 }
 
-//Fetch functions
+/**
+ * Appends a whole cycle to this_cycle
+ * @param {string} configId - Token
+ * @param {object?} updates - What JSON needs to be updated
+ */
 function updateUserConfig(configId, updates){
     console.log(JSON.stringify(updates))
     //Fetches the database and updates the specficied user's document
