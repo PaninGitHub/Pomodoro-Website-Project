@@ -114,6 +114,21 @@
                             <option value="never">Never</option>
                         </select>
                     </div>
+                    <div class="i_settings_cat">
+                        Default sound played when timer done
+                        <select class="s_dropdown" id="s_alarm_sound">
+                            <option value="alarm_bell">Alarm Bell</option>
+                            <option value="digital_bell">Digital Alarm</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div class="i_settings_cat">
+                         Sound when button's clicked
+                        <select class="s_dropdown" id="s_button_sound">
+                            <option value="button_press">Default</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
                     <div class="i_settings_cat" id="s_override_n">
                         Max Dots Shown
                         <input class="s_input" id="s_max_dots_shown" type="number" min="1" max="30">
@@ -152,6 +167,10 @@
                     </label>
                     <div class="i_settings_cat" id="tp_color"> Color: 
                         <input data-coloris class="s_input" id="s_p_color" >
+                    </div>
+                    <div class="i_settings_cat">
+                        Description 
+                        <input class="s_input" id="s_p_description">
                     </div>
                 </div>
             </div>

@@ -32,6 +32,7 @@ import { Period } from "../classes/Period.js";
 import {trans} from "./transitions.js";
 
 //Testing purposes 
+//const token = '66b2b674432309988191d291'
 const token = 'devmode'
 
 //Sets variables. Time represents seconds in this case
@@ -217,17 +218,6 @@ function matchPeriodProperties(toReplace, newlist){
     });
 }
 
-function updateCycle(){
-    this_periodlist = [];
-    for(let i = 0; i < c.amtOfCycles; i++){
-        for(let j = 0; j < this_cycle.length; j++){
-            if(isMultiCycle(this_cycle[j])){
-                
-            }
-            this_periodlist.push(this_cycle[j])
-        }
-    }
-}
 
 /** 
  * Updates the display of the dots so that it matches the current cycle
@@ -444,8 +434,12 @@ function updateTimeEstimate(){
     }
     if(c.est_time_format == "24-hr"){
         //Makes sure that the time is displayed in proper HH:MM format
-        estHr.innerHTML = ~~(timeest / 3600).toString().padStart(2, '0');
-        estMin.innerHTML = ~~((timeest % 3600) / 60).toString().padStart(2, '0');
+        estHr.innerHTML = ~~((timeest % 86400)/ 3600)
+        estMin.innerHTML = ~~((timeest % 3600) / 60)
+        //I have no idea why, but you have to stringify and pad the value seperately instead of on the same line where the value is calculated. Otherwise it won't pad the string with a "0" when needed: "ex: "
+        estHr.innerHTML = estHr.innerHTML.toString().padStart(2, '0')
+        estMin.innerHTML = estMin.innerHTML.toString().padStart(2, '0')
+        return;
     }
     else{
         //Makes sure that the time is displayed in proper HH:MM AM/PM format
@@ -464,6 +458,7 @@ function updateTimeEstimate(){
                 estHr.innerHTML = 12
             }
         }
+        return;
     }
     //Idk if Javascript will delete these element, but ima do it manually just to avoid any memory leaks
     now, hr, min, sec, timeest = null;
@@ -535,8 +530,9 @@ function timerDone(skip){
     let tp = this_periodlist[0] //tp -> This Period
     if(c.pomodoro_mode == "timer"){
         time = 0
-        let i = new Audio(c.default_alarm_sound)
-        i.play()
+        loadAudio(c.default_alarm_sound).then(s => {
+           s.play()
+        })
         clearInterval(thisInterval);
         new Notification(`Your timer is done!`)
         button.innerHTML = "Restart"
@@ -546,7 +542,9 @@ function timerDone(skip){
         return;
     }
     if(!skip){
-        tp.playSound();
+        loadAudio(c.default_alarm_sound).then(s => {
+            s.play()
+        })
         tp.pushNotification(c.notificationForAll)
     }
     removePeriod(0)
@@ -705,6 +703,11 @@ function setPeriods(mode){
     updateDots(true)
 }
 
+/**
+ * Calculates the difference in milliseconds through intervals and then subtract that from the time.
+ * Ensures that the timer doesn't "lag" behind due to setInterval() and setTimeout() inconsistencies
+ * @param {*} bef 
+ */
 function runTimer(bef){
     thisInterval = setInterval(function() {
         if (time <= intervalinms / 1000){
@@ -787,6 +790,33 @@ function checkState(){
     console.log("Timer is in " + state + " mode")
 }
 
+/**
+ * Loads audio and returns a type Audio
+ */
+async function loadAudio(n){
+    //Loads JSON
+    var audiojson
+    //We have to return the fetch as when we return inside the fetch it returns to the function, not to what called the function.
+    return fetch(`../data/defaults/sounds.json`)
+    .then(res => res.json()).then(data => {
+        audiojson = data;
+        //Sorts through JSON to find speicfic audio file via name
+        for (const s of audiojson.sounds){
+            if(s.target_name == n){
+                if(!s.isURL){
+                    //Loads the audio file and returns it
+                    return new Audio(`../assets/audio/${s.audio}`);
+                } 
+            }
+        }
+        throw new Error("File was not found when loading audio with the name " + n)
+    }).catch(error => {
+        // Handle any errors that occur during the fetch
+        console.error(`Error loading audio name ${name}:`, error);
+        return;
+    });
+}
+    
 //Start of the program
 /*So exciting!!
 /* */
@@ -798,7 +828,9 @@ function startJSON(){
     //Javascript doesn't have a way to deep copy without more code I'm too lazy to implement so I guess we have to do this
     periods = JSON.parse(JSON.stringify(c.periods))
     this_cycle = JSON.parse(JSON.stringify(c.cycle))
-    buttonclickaudio = new Audio(c.default_button_press_sound);
+    loadAudio(c.default_button_press_sound).then(s => {
+        buttonclickaudio = s
+    })
     uploadBackgroundIMG(c.background_image)
     askNotificationPermission()
     pomodots.removeChild(pomodots.children[0]);
@@ -815,7 +847,7 @@ function startJSON(){
  * @param {object?} updates - What JSON needs to be updated
  */
 function updateUserConfig(configId, updates){
-    console.log(JSON.stringify(updates))
+    //console.log(JSON.stringify(updates))
     //Fetches the database and updates the specficied user's document
     fetch(`http://localhost:3000/user_configs/${configId}`, {
         method: 'PATCH',
@@ -861,8 +893,8 @@ if(token == 'devmode'){
 
 //Handles when the button is pressed
 button.addEventListener("click", function(){
-    buttonclickaudio.play()
-    checkState()
+        buttonclickaudio.play();
+        checkState();
 })
 
 //Handles when a key is pressed
@@ -1039,8 +1071,25 @@ displayed_settings.forEach((ele) => {
                     pomodoro_mode: this.value
                 })
                 startOfTimer()
+                break;
             case 'cycle_presets':
                 setCyclePreset(this.value)
+                break;
+            case 's_alarm_sound':
+                c.default_alarm_sound = this.value
+                updateUserConfig(token, {
+                    default_alarm_sound : this.value
+                })
+                break;
+            case 's_button_sound':
+                c.default_button_press_sound = this.value
+                loadAudio(this.value).then(s => {
+                    buttonclickaudio = s
+                })
+                updateUserConfig(token, {
+                    default_button_press_sound: this.value
+                })
+                break;
             //Individual Periods 
             case 's_p_dropdown':
                 try{
@@ -1066,6 +1115,7 @@ displayed_settings.forEach((ele) => {
                 } catch (error){
                     console.log(error)
                 }
+                break;
             case 's_p_color':
                 try {
                     tps_selected = getPeriodByLabel(document.getElementById('s_p_dropdown').value);
@@ -1075,6 +1125,19 @@ displayed_settings.forEach((ele) => {
                 } catch (error) {
                     console.log(error)
                 }
-            }
+                break;
+            case 's_p_alarm_sound':
+                c.default_alarm_sound = this.value
+                updateUserConfig(token, {
+                    default_alarm_sound: this.value
+                })
+                break;
+            case 's_p_sound':
+                loadAudio(this.value).then(s => {
+                    console.log(s)
+                    buttonclickaudio = s;
+                })
+                break;
+        }
     })
 })

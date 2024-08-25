@@ -56,6 +56,6 @@ export class Period {
             }
             return;
         }
-        this.keys(prop) = value
+        this[prop] = value;
     }
 }
