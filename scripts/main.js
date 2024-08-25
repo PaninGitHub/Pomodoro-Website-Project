@@ -805,7 +805,9 @@ async function loadAudio(n){
             if(s.target_name == n){
                 if(!s.isURL){
                     //Loads the audio file and returns it
-                    return new Audio(`../assets/audio/${s.audio}`);
+                    i = new Audio(`../assets/audio/${s.audio}`);
+                    i.volume = c.sounds.find(j => j.target_name === n); //Looks through array for specific key: value pair
+                    return i;
                 } 
             }
         }
@@ -838,6 +840,7 @@ function startJSON(){
     button.dataset.state = 'start';
     console.log(`Loaded in ${this_periodlist.length} periods`)
     setInterval(updateTimeEstimate, 1000)
+    buttonclickaudio.volume = c.sounds.find(i => i.target_name === c.default_button_press_sound)
     initalizeSettings()
 }
 
