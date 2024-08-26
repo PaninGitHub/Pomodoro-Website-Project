@@ -32,7 +32,6 @@ import { Period } from "../classes/Period.js";
 import {trans} from "./transitions.js";
 
 //Testing purposes 
-//const token = '66b2b674432309988191d291'
 const token = 'devmode'
 
 //Sets variables. Time represents seconds in this case
@@ -805,8 +804,8 @@ async function loadAudio(n){
             if(s.target_name == n){
                 if(!s.isURL){
                     //Loads the audio file and returns it
-                    i = new Audio(`../assets/audio/${s.audio}`);
-                    i.volume = c.sounds.find(j => j.target_name === n); //Looks through array for specific key: value pair
+                    let i = new Audio(`../assets/audio/${s.audio}`);
+                    i.volume = c.sounds.find(j => j.target_name === n).volume; //Looks through array for specific key: value pair
                     return i;
                 } 
             }
@@ -814,7 +813,7 @@ async function loadAudio(n){
         throw new Error("File was not found when loading audio with the name " + n)
     }).catch(error => {
         // Handle any errors that occur during the fetch
-        console.error(`Error loading audio name ${name}:`, error);
+        console.error(`Error loading audio name ${n}:`, error);
         return;
     });
 }
@@ -840,7 +839,7 @@ function startJSON(){
     button.dataset.state = 'start';
     console.log(`Loaded in ${this_periodlist.length} periods`)
     setInterval(updateTimeEstimate, 1000)
-    buttonclickaudio.volume = c.sounds.find(i => i.target_name === c.default_button_press_sound)
+    //buttonclickaudio.volume = c.sounds.find(i => i.target_name === c.default_button_press_sound)
     initalizeSettings()
 }
 
@@ -1129,6 +1128,9 @@ displayed_settings.forEach((ele) => {
                     console.log(error)
                 }
                 break;
+            case 's_p_description':
+                tps_selected = getPeriodByLabel(document.getElementById('s_p_dropdown').value);
+                tps_selected.description = this.value;
             case 's_p_alarm_sound':
                 c.default_alarm_sound = this.value
                 updateUserConfig(token, {
@@ -1142,5 +1144,16 @@ displayed_settings.forEach((ele) => {
                 })
                 break;
         }
+    })
+})
+
+//Handles saving buttons when clicked
+document.getElementById("save_individual").addEventListener("click", function(){
+    //Simply copies and replaces the old period settings with the current one loaded
+    //Inefficent but simple. Will update after deployment,
+    let a = periods
+    c.periods = a
+    updateUserConfig(token, {
+        periods: a 
     })
 })

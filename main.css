@@ -399,6 +399,25 @@ p{
     transition: opacity .2;
 }
 
+#save_individual{
+    color: black;
+    font-size: 1em;
+    font-family: Nixie One, Source Code Pro, Arial, Helvetica, sans-serif;
+    font-weight: 800;
+    background-color: #c3cccce3;
+    width: 100px;
+    border-radius: 10px;
+    padding: 5px;
+    appearance: none;
+    border: none;
+    transition: .3s;
+}
+#save_individual:hover{
+    font-size: 1.2em;
+    box-shadow: 0px 0px 3px 3px #dce6e680;
+    transition: .4s;
+}
+
 @keyframes transitionIn {
     from {
         opacity: 0;
