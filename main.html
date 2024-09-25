@@ -21,6 +21,7 @@
         <link rel="stylesheet" href="/Coloris-0.24.0/dist/coloris.min.css"/>
         <script src="/Coloris-0.24.0/dist/coloris.min.js"></script>
     <body id="body">
+        <div id="user_icon_background"><img src="./assets/icons/user.png" alt="Settings" class="user_icon_class" id="user_icon"></div>
         <div id="settings_icon_background"><img src="./assets/icons/settings.png" alt="Settings" class="settings_icon_class" id="settings_icon"></div>
         <div class="helptext" id="help_text">
             <p>Shift while timer is running to stop</p>
@@ -67,118 +68,139 @@
         </div>
         <div id='statustext'></div>
         <aside class="settings_aside_class settings_shown" id="settings_aside">
+            <div class="top_settings">
+                <div><img src="./assets/icons/user.png" alt="Settings" class="settings_icon_group" id="s_i_user"></div>
+                <div><img src="./assets/icons/home.png" alt="Settings" class="settings_icon_group" id="s_i_general"></div>
+                <div><img src="./assets/icons/timer.png" alt="Settings" class="settings_icon_group" id="s_i_timer"></div>
+            </div>
             <div class="settings_container">
-                <legend class="settings_cat_title" id="general_settings_legend">General Settings</legend>
-                <div class="settings_cat" id="general_settings_cat"> 
-                    <div class="i_settings_cat" id="s_img_url">
-                        Image URL?
-                        <input class="s_input" id="s_url_bkground_img">
-                        </label>
-                    </div>
-                    <div class="i_settings_cat" id="s_str_img">
-                        Stretch Image?
-                        <select class="s_dropdown" id="s_strch_bkground">
-                            <option value="select">Select</option>
-                            <option value="default">Default</option>
-                            <option value="stretch">Stretch</option>
-                            <option value="fit">Fit</option>
-                        </select>
-                    </div>
-                    <div class="i_settings_cat" id="s_time_est">
-                        Show Time Estimate
-                        <label class="s_toggle" for="s_time_est_toggle">
-                            <input class="s_toggle__input" type="checkbox" id="s_time_est_toggle">
-                            <div class="s_toggle__fill"></div>
-                        </label>
-                    </div>
-                    <div class="i_settings_cat" id="s_time_est_format_div">
-                        Time Estimate Format
-                        <select class="s_dropdown" id="s_time_est_format">
-                            <option value="select">Select</option>
-                            <option value="12-hr">12 Hour</option>
-                            <option value="24-hr">24 Hour</option>
-                        </select>
-                    </div>
-                    <div class="i_settings_cat" id="s_first_dot_glows">
-                        First Dot Glows
-                        <label class="s_toggle" for="s_glow_first_toggle">
-                            <input class="s_toggle__input" type="checkbox" id="s_glow_first_toggle">
-                            <div class="s_toggle__fill"></div>
-                        </label>
-                    </div>
-                    <div class="i_settings_cat" id="s_override_n">
-                        Notification when Timer Ends?
-                        <select class="s_dropdown" id="s_notif_all">
-                            <option value="default">Default</option>
-                            <option value="always">Always</option>
-                            <option value="never">Never</option>
-                        </select>
-                    </div>
-                    <div class="i_settings_cat">
-                        Default sound played when timer done
-                        <select class="s_dropdown" id="s_alarm_sound">
-                            <option value="alarm_bell">Alarm Bell</option>
-                            <option value="digital_bell">Digital Alarm</option>
-                            <option value="none">None</option>
-                        </select>
-                    </div>
-                    <div class="slidecontainer">
-                        <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-                      </div>
-                    <div class="i_settings_cat">
-                         Sound when button's clicked
-                        <select class="s_dropdown" id="s_button_sound">
-                            <option value="button_press">Default</option>
-                            <option value="none">None</option>
-                        </select>
-                    </div>
-                    <div class="i_settings_cat" id="s_override_n">
-                        Max Dots Shown
-                        <input class="s_input" id="s_max_dots_shown" type="number" min="1" max="30">
-                    </div>
-                    <span id="general_settings_warning" class="s_warning_text">(Warning: Will reset timer)</span>
-                </div>
-            <legend class="settings_cat_title" id="time_settings_legend">Timer Settings</legend>
-            <span class="s_warning_text center">(Warning: Will reset timer and current progress)</span>
-                <div class="settings_cat">
-                    <div class="i_settings_cat" id="why_does_this_need_an_id_again">
-                        <div>
-                        Timer Mode
+                <div class="whole_settings_cat" id="general_settings_whole">
+                    <legend class="settings_cat_title" id="general_settings_legend">General Settings</legend>
+                    <div class="settings_cat" id="general_settings_cat"> 
+                        <div class="i_settings_cat" id="s_img_url">
+                            Image URL?
+                            <input class="s_input" id="s_url_bkground_img">
+                            </label>
                         </div>
-                        <select class="s_dropdown" id="s_timer_mode">
-                            <option value="classic">Classic</option>
-                            <option value="overflow">Overflow</option>
-                            <option value="timer">Timer</option>
-                            <option value="stopwatch">Stopwatch</option>
+                        <div class="i_settings_cat" id="s_str_img">
+                            Stretch Image?
+                            <select class="s_dropdown" id="s_strch_bkground">
+                                <option value="select">Select</option>
+                                <option value="default">Default</option>
+                                <option value="stretch">Stretch</option>
+                                <option value="fit">Fit</option>
+                            </select>
+                        </div>
+                        <div class="i_settings_cat" id="s_time_est">
+                            Show Time Estimate
+                            <label class="s_toggle" for="s_time_est_toggle">
+                                <input class="s_toggle__input" type="checkbox" id="s_time_est_toggle">
+                                <div class="s_toggle__fill"></div>
+                            </label>
+                        </div>
+                        <div class="i_settings_cat" id="s_time_est_format_div">
+                            Time Estimate Format
+                            <select class="s_dropdown" id="s_time_est_format">
+                                <option value="select">Select</option>
+                                <option value="12-hr">12 Hour</option>
+                                <option value="24-hr">24 Hour</option>
+                            </select>
+                        </div>
+                        <div class="i_settings_cat" id="s_first_dot_glows">
+                            First Dot Glows
+                            <label class="s_toggle" for="s_glow_first_toggle">
+                                <input class="s_toggle__input" type="checkbox" id="s_glow_first_toggle">
+                                <div class="s_toggle__fill"></div>
+                            </label>
+                        </div>
+                        <div class="i_settings_cat" id="s_override_n">
+                            Notification when Timer Ends?
+                            <select class="s_dropdown" id="s_notif_all">
+                                <option value="default">Default</option>
+                                <option value="always">Always</option>
+                                <option value="never">Never</option>
+                            </select>
+                        </div>
+                        <div class="i_settings_cat">
+                            Default sound played when timer done
+                            <select class="s_dropdown" id="s_alarm_sound">
+                                <option value="alarm_bell">Alarm Bell</option>
+                                <option value="digital_bell">Digital Alarm</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                        <div class="slidecontainer">
+                            <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                        </div>
+                        <div class="i_settings_cat">
+                            Sound when button's clicked
+                            <select class="s_dropdown" id="s_button_sound">
+                                <option value="button_press">Default</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                        <div class="i_settings_cat" id="s_override_n">
+                            Max Dots Shown
+                            <input class="s_input" id="s_max_dots_shown" type="number" min="1" max="30">
+                        </div>
+                        <span id="general_settings_warning" class="s_warning_text">(Warning: Will reset timer)</span>
+                    </div>
+            </div>
+            <div class="whole_settings_cat hide" id="time_settings_whole">
+                <legend class="settings_cat_title" id="time_settings_legend">Timer Settings</legend>
+                <span class="s_warning_text center">(Warning: Will reset timer and current progress)</span>
+                    <div class="settings_cat">
+                        <div class="i_settings_cat" id="why_does_this_need_an_id_again">
+                            <div>
+                            Timer Mode
+                            </div>
+                            <select class="s_dropdown" id="s_timer_mode">
+                                <option value="classic">Classic</option>
+                                <option value="overflow">Overflow</option>
+                                <option value="timer">Timer</option>
+                                <option value="stopwatch">Stopwatch</option>
+                            </select>
+                        </div>
+                        <div class="i_settings_cat">
+                            Cycle Preset:
+                            <select class="s_dropdown" id="cycle_presets">
+                                <option value="select">Select</option>
+                                <option value="no_preset">No Preset</option>
+                            </select>
+                        </div>
+                        <div class="i_settings_cat" id="s_timer_cycle">
+                            Cycle:
+                            <input class="s_input" id="s_cycle_input">
+                        </div>
+                    </div>
+                <legend class="settings_cat_title" id="time_settings_legend">Time Period Settings <div id="spdot" class="s_p_dot"></div></legend>
+                    <div class="settings_cat">
+                        <select class="s_p_dropdown" id="s_p_dropdown">
+                            <option id="s_p_option" value="select">Select</option>
                         </select>
+                        <label class="i_settings_cat" placeholder="15" for=""> Time Duration:
+                            <input class="s_input" id="s_p_dur">
+                        </label>
+                        <div class="i_settings_cat" id="tp_color"> Color: 
+                            <input data-coloris class="s_input" id="s_p_color" >
+                        </div>
+                        <div class="i_settings_cat">
+                            Description 
+                            <input class="s_input" id="s_p_description">
+                        </div>
                     </div>
-                    <div class="i_settings_cat">
-                        Cycle Preset:
-                        <select class="s_dropdown" id="cycle_presets">
-                            <option value="select">Select</option>
-                            <option value="no_preset">No Preset</option>
-                        </select>
-                    </div>
-                </div>
-            <legend class="settings_cat_title" id="time_settings_legend">Time Period Settings <div id="spdot" class="s_p_dot"></div></legend>
-                <div class="settings_cat">
-                    <select class="s_p_dropdown" id="s_p_dropdown">
-                        <option id="s_p_option" value="select">Select</option>
-                    </select>
-                    <label class="i_settings_cat" placeholder="15" for=""> Time Duration:
-                        <input class="s_input" id="s_p_dur">
-                    </label>
-                    <div class="i_settings_cat" id="tp_color"> Color: 
-                        <input data-coloris class="s_input" id="s_p_color" >
-                    </div>
-                    <div class="i_settings_cat">
-                        Description 
-                        <input class="s_input" id="s_p_description">
-                    </div>
-                    <button id="save_individual">Save</button>
+                    <button class="save_button" id="save_individual">Save</button>
                 </div>
             </div>
-        </aside> 
+            <div class="whole_settings_cat hide" id="user_settings_whole">
+                <a href="http://localhost:5000/auth/google">
+                    <img class="google_sign_in" src="./assets/icons/sign_in_google.png">
+                </a>
+                <div class="settings_cat">
+                    Email: <div id="user-email"></div>
+                </div>
+            </div>
+            </aside> 
     </body>
     <script src="scripts/main.js" type="module" defer></script>
     </head>

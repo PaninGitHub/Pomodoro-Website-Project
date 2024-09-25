@@ -622,6 +622,19 @@ function isMultiCycle(element){
     return(isMulti)
 }
 
+function showOnlyOneSetting(id){
+    document.querySelectorAll('settings_icon_group').forEach(ele => {
+        if(ele.id === id){
+            if(ele.classList.contains('hide')){
+                ele.classList.remove('hide')
+            }
+        }
+        else if(!ele.classList.contains('hide')){
+            ele.classList.add('hide')
+        }
+    })
+}
+
 /**
  * Returns the length of the cycle
  * @param {array} cycle
@@ -643,6 +656,34 @@ function lengthOfCycle(cycle){
         }
     });
     return(l)
+}
+
+/**
+ * Checks if cycle is valid
+ * @param {*} cycle 
+ * @returns cycle, and false if not valids
+ */
+function isCycleFormatted(cycle){
+    //Take input and put into array
+    let arr = cycle.split(',').map(seg => `${seg.trim()}`);
+    //Go through array and detect whether it matches w/ a name or label
+    for(let a of arr){
+        console.log(a)
+        let b = c.periods.find(item => item['label'] === a)
+        if(!b){
+            b = c.periods.find(item => item['name' === a])
+        }
+        if(!b){
+            if(isMultiCycle(a)){
+                continue;
+            }
+            else{
+                return false;
+            }
+        }
+    }
+    //Return true if valid
+    return arr;
 }
 
 /**
@@ -721,12 +762,8 @@ function runTimer(bef){
     }, intervalinms)
 }
 
-function runStopwatch(){
+function runStopwatch(bef){
     thisInterval = setInterval(function() {
-        if (time <= intervalinms / 1000){
-            timerDone(false);
-            return;
-        }
         let aft = Date.now()
         let change = aft - bef
         time += change / 1000 //Converts change in ms to s
@@ -760,7 +797,7 @@ function checkState(){
         state = 'running';
         trans.static("Pause", button);
         if(c.pomodoro_mode == "stopwatch"){
-            runStopwatch();
+            runStopwatch(Date.now());
         }
         else{
             runTimer(Date.now());
@@ -843,6 +880,14 @@ function startJSON(){
     initalizeSettings()
 }
 
+function verifyGoogleUser(){
+    //Fetches route where user logs in
+    fetch(`http://localhost:5000/protected`).
+    then(res => {
+        console.log(res)
+    })
+}
+
 /**
  * Appends a whole cycle to this_cycle
  * @param {string} configId - Token
@@ -888,9 +933,11 @@ if(token == 'devmode'){
         startJSON()
     }).catch(error =>{
         console.log('Error fetching user configs', error);
+        document.getElementById("periodtitle").innerHTML = "Could not load user: Either server is down or not working properly"
     })
-
 }
+
+verifyGoogleUser();
 
 
 //Handles when the button is pressed
@@ -901,7 +948,7 @@ button.addEventListener("click", function(){
 
 //Handles when a key is pressed
 document.addEventListener('keydown', (e) => {
-    if(!e.repeat &&  e.code === "Space"){
+    if(!e.repeat &&  e.code === "Space" &&   settings_aside.classList.contains("settings_shown")){
         buttonclickaudio.play() 
         checkState()
     }
@@ -961,8 +1008,18 @@ document.addEventListener('keyup', (e) => {
     }
 })
 
+
+
 //Handles when settings button is clicked
 settings_icon_background.addEventListener('click', function(){
+    //Hides user button
+    const a = document.getElementById('user_icon_background')
+    if(!a.classList.contains('hide')){
+        a.classList.add('hide')
+    }
+    else{
+        a.classList.remove('hide')
+    }
     //Checks classes of the setting background to determine if settings is shown or not
     [settings_icon, 
     settings_icon_background, 
@@ -976,6 +1033,34 @@ settings_icon_background.addEventListener('click', function(){
 }   )
     
 })
+
+//Handles the top settings part
+
+// Select all elements with the specified class
+const topsettings = document.querySelectorAll('.settings_icon_group');
+const wholesettingcats = document.querySelectorAll('.whole_settings_cat')
+
+// Add a click event listener to each element
+topsettings.forEach(ele => {
+    ele.addEventListener('click', () => {
+        // Hide all elements in the specific class
+        wholesettingcats.forEach(el => {
+            if (!el.classList.contains('hide')) el.classList.add('hide');
+        });
+        // Show the clicked element's respective target
+        let t;
+        if(ele.id == 's_i_user'){
+            t = document.getElementById('user_settings_whole')
+        }
+        else if(ele.id == 's_i_general'){
+            t = document.getElementById('general_settings_whole');
+        }
+        else if(ele.id == 's_i_timer'){
+            t = document.getElementById('time_settings_whole')
+        }
+        if (t.classList.contains('hide')){ t.classList.remove('hide'); t.classList.add('selected') };
+    });
+});
 
 //Changing time in clock
 clockdisplay.addEventListener("click", function(){
@@ -1149,11 +1234,22 @@ displayed_settings.forEach((ele) => {
 
 //Handles saving buttons when clicked
 document.getElementById("save_individual").addEventListener("click", function(){
-    //Simply copies and replaces the old period settings with the current one loaded
-    //Inefficent but simple. Will update after deployment,
+    //Simply copies and replaces the old period settings with the current one loaded, along other important settings
+    //Inefficent but simple. Will update after deployment
     let a = periods
     c.periods = a
     updateUserConfig(token, {
         periods: a 
     })
+    let b = isCycleFormatted(document.getElementById("s_cycle_input").value)
+    if(b){
+        c.cycle = b
+        updateUserConfig(token, {
+            cycle : b
+        })
+        startOfTimer()
+    }
+    else if(!(b == "" || b == null)){
+        console.error(`Error while attempting to save settings: cycle ${b} is not valid`)
+    }
 })
