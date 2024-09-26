@@ -31,13 +31,14 @@ app.use(cors());
 
 //Creates a cookie
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  console.log("Serialized User ", user._id)
+  done(null, user._id.toString()); //Gets user id and converts the ObjectId to a string 
 })
 
 //Finds cookie via id
 passport.deserializeUser((id, done) => {
   User.findById(id).then((user) => {
-    done(null, user.id);
+    done(null, user._id.toString());
   }).catch(err => {
     console.log(`Error: Problem with deserializing user: ${err}`)
   });
