@@ -80,16 +80,7 @@ passport.use(new GoogleStrategy({
         //Fetch document id and send it to the front end to load up MongoDB document (TODO)
     })
     .catch(err => {
-      res.status(500).json({error: 'Could not load user document. Please report error.'})
-  })
-    //Does smth idk
-    return done(null, profile)
-  }
+      console.log(`Error: Could not find user: ${err}`)
+      done(err)
+  })}
 ));
-
-passport.serializeUser(function(user, done) {
-    done(null, user);
-});
-passport.deserializeUser(function(user, done){
-    done(null, user);
-})

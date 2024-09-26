@@ -3,7 +3,6 @@ require('./auth')
 const cors = require('cors')
 
 const express = require('express');
-const session = require('express-session')
 const passport = require('passport');
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
@@ -13,7 +12,9 @@ const cookiesesh = require('cookie-session')
 
 //Initializes App
 const app = express();
-app.use(session({ secret: process.env.APP_SECRET, resave: false, saveUninitialized: true}));
+
+//Disabled because I guess this interferences with the user cookies???
+//app.use(session({ secret: process.env.APP_SECRET, resave: false, saveUninitialized: true}));
 app.use(express.json())
 app.use(cors());
 
@@ -28,10 +29,10 @@ function isLoggedIn(req, res, next) {
 mongoose.connect(process.env.DB_FULL_URL)
 
 //Initalizes Cookie
-//app.use(cookiesesh({
-//    maxAge: 24 * 60 * 60 * 1000,
-//    keys: [process.env.APP_SECRET]
-//}))
+app.use(cookiesesh({
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: [process.env.APP_SECRET]
+}))
 
 //Idk bro does it send the cookie?
 app.use(passport.initialize());
