@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express');
+const session = require('express-session')
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const cors = require('cors')
@@ -28,21 +29,6 @@ connectToDb((err) => {
 //Express
 const app = express();
 app.use(cors());
-
-//Creates a cookie
-passport.serializeUser((user, done) => {
-  console.log("Serialized User ", user._id)
-  done(null, user._id.toString()); //Gets user id and converts the ObjectId to a string 
-})
-
-//Finds cookie via id
-passport.deserializeUser((id, done) => {
-  User.findById(id).then((user) => {
-    done(null, user._id.toString());
-  }).catch(err => {
-    console.log(`Error: Problem with deserializing user: ${err}`)
-  });
-})
 
 //Is a middleware software
 //The url is linked to the web application in Google API. 
@@ -73,6 +59,7 @@ passport.use(new GoogleStrategy({
               configId: "N/A"
               }).save().then((newUser) => {
               console.log('New user created!: ' + newUser)
+              done(null, currentUser)
               }).catch(err => {
                 console.log(`Error: Problem with saving a new user (${googleId}) to database: ${err}`)
                 done(null, currentUser)
