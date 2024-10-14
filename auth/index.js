@@ -22,7 +22,7 @@ app.use(cors());
 
 //Initalizes Passport
 app.use(session({
-    secret: process.env.ACCESS_TOKEN_SECRET,
+    secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
