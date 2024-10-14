@@ -1,14 +1,12 @@
 require('dotenv').config()
 require('./auth')
 const cors = require('cors')
+
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
-const logger = require('morgan');
-const session = require('express-session')
-const MongoStore = require('connect-mongo')
-const path = require('path')
+const cookiesesh = require('cookie-session')
 
 //Idk but it might mess with google aut
 
@@ -20,19 +18,6 @@ const app = express();
 app.use(express.json())
 app.use(cors());
 
-//Initalizes Passport
-app.use(session({
-    secret: process.env.ACCESS_TOKEN_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.DB_FULL_URL,
-        touchAfter: 24 * 3600 //Time period in seconds
-    })
-}))
-app.use(passport.initialize());
-app.use(passport.session());
-
 //middleware function
 //checks if the request has a user (if yes, next(). if no, send 401)
 //connect.sid is the session id
@@ -42,30 +27,31 @@ function isLoggedIn(req, res, next) {
 
 //connect to mongodb through mongoose
 mongoose.connect(process.env.DB_FULL_URL)
-.then(() => console.log('Mongoose connected on index.js'))
-.catch(err => console.error(`MongoDB connection error: ${err}`));
 
-//Maintains state idk
-app.use(express.static(path.join(__dirname, '..')))
-app.use(passport.authenticate('session'));
+//Initalizes Cookie
+app.use(cookiesesh({
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: [process.env.APP_SECRET]
+}))
 
-//Creates a cookie
-passport.serializeUser((user, done) => {
-    console.log("Serialized User ", user._id)
-    process.nextTick(function() {
-      done(null, user); //Gets user id and converts the ObjectId to a string ._id.toString()
-    });
-  })
-  
-  //Finds cookie via id
-  passport.deserializeUser((id, done) => {
-    User.findById(id).then((user) => {
-      done(null, user);
-    }).catch(err => {
-      console.log(`Error: Problem with deserializing user: ${err}`)
-    });
-  })
+//Idk bro does it send the cookie?
+app.use(passport.initialize());
+app.use(passport.session());
 
+
+// initalize passport
+
+
+const posts = [
+    {
+        username: 'Kyle',
+        title: 'Post 1'
+    },
+    {
+        username: 'Jim',
+        title: 'Post 2'
+    }
+]
 
 app.get('/posts', (req, res) => {
     res.json(posts)

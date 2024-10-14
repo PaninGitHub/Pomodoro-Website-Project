@@ -30,6 +30,20 @@ connectToDb((err) => {
 const app = express();
 app.use(cors());
 
+//Creates a cookie
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+})
+
+//Finds cookie via id
+passport.deserializeUser((id, done) => {
+  User.findById(id).then((user) => {
+    done(null, user.id);
+  }).catch(err => {
+    console.log(`Error: Problem with deserializing user: ${err}`)
+  });
+})
+
 //Is a middleware software
 //The url is linked to the web application in Google API. 
 passport.use(new GoogleStrategy({
