@@ -23,7 +23,7 @@ app.use(cookieSession({
     keys: [process.env.APP_SECRET]
 }))
 
-//Idk bro does it send the cookie?
+//Initalizes Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
