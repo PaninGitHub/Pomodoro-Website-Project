@@ -22,7 +22,7 @@ app.use(cors());
 
 //Initalizes Passport
 app.use(session({
-    secret: process.env.COOKIE_SECRET,
+    secret: process.env.ACCESS_TOKEN_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
@@ -121,5 +121,3 @@ app.get('/logout', (req, res) => {
 
 //Listens to the route
 app.listen(5000, () => console.log('listening on: 5000'));
-
-
